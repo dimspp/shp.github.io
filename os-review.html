@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>操作系统复习 · OS Review</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f6f2ec;
+  --sidebar-bg: #1e1728;
+  --sidebar-hover: #2d223c;
+  --card-bg: #ffffff;
+  --accent: #d4a04a;
+  --accent-soft: #e8d5a3;
+  --accent-dark: #b8892e;
+  --text: #1e1728;
+  --text-muted: #7a6d82;
+  --text-sidebar: #c8bdd6;
+  --correct: #2b8a5e;
+  --correct-bg: #e8f5ee;
+  --wrong: #c2464a;
+  --wrong-bg: #fde8e8;
+  --border: #e8e2da;
+  --radius: 12px;
+  --shadow: 0 2px 12px rgba(30,23,40,0.06);
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Figtree', system-ui, sans-serif;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--sidebar-bg);
+  color: var(--text-sidebar);
+  padding: 2rem 0;
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-brand {
+  padding: 0 1.5rem 1.5rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 1rem;
+}
+.sidebar-brand h1 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: #fff;
+  line-height: 1.2;
+}
+.sidebar-brand span {
+  font-size: 0.8rem;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.sidebar-nav { padding: 0.5rem 0; flex: 1; }
+.nav-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border-left: 3px solid transparent;
+  text-decoration: none;
+  color: var(--text-sidebar);
+}
+.nav-item:hover { background: var(--sidebar-hover); }
+.nav-item.active {
+  background: var(--sidebar-hover);
+  border-left-color: var(--accent);
+  color: #fff;
+}
+.nav-progress {
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 600;
+  min-width: 2rem;
+  text-align: right;
+}
+.nav-item-divider {
+  padding: 1rem 1.5rem 0.3rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.3);
+  font-weight: 600;
+}
+.mode-toggle-wrap {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+.mode-toggle {
+  display: flex;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.mode-btn {
+  flex: 1;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--text-sidebar);
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+}
+.mode-btn.active { background: var(--accent); color: #1e1728; }
+.mode-btn:first-child { border-radius: 8px 0 0 8px; }
+.mode-btn:last-child { border-radius: 0 8px 8px 0; }
+
+/* Main */
+.main {
+  margin-left: 280px;
+  flex: 1;
+  padding: 0;
+  max-width: 900px;
+}
+.hero {
+  padding: 3rem 3rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.hero h2 {
+  font-family: var(--font-serif);
+  font-size: 2.2rem;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+.hero p {
+  color: var(--text-muted);
+  font-size: 1rem;
+}
+.hero-stats {
+  display: flex;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+.stat-num {
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+/* Chapter section */
+.chapter { padding: 0 3rem 2rem; }
+.chapter:first-of-type { padding-top: 2rem; }
+.chapter-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 0 0.8rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--accent-soft);
+  cursor: pointer;
+}
+.chapter-header h3 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  color: var(--text);
+}
+.chapter-progress {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* Question card */
+.question-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--accent);
+  transition: all 0.3s;
+}
+.question-card.wrong { border-left-color: var(--wrong); }
+.question-card.correct { border-left-color: var(--correct); }
+.q-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+.q-number {
+  min-width: 2rem;
+  height: 2rem;
+  background: var(--accent-soft);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+.q-text {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding-top: 0.15rem;
+}
+.q-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-left: 2.8rem;
+}
+.q-option {
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+  font-weight: 500;
+  background: var(--card-bg);
+}
+.q-option:hover:not(.disabled) {
+  border-color: var(--accent);
+  background: rgba(212,160,74,0.05);
+}
+.q-option.selected { border-color: var(--accent); background: rgba(212,160,74,0.1); }
+.q-option.correct-answer { border-color: var(--correct); background: var(--correct-bg); color: var(--correct); }
+.q-option.wrong-answer { border-color: var(--wrong); background: var(--wrong-bg); color: var(--wrong); }
+.q-option.revealed { border-color: var(--correct); background: var(--correct-bg); }
+.q-option.disabled { cursor: default; opacity: 0.85; }
+
+.q-answer {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  background: #faf8f5;
+  font-size: 0.85rem;
+  display: none;
+  border-left: 3px solid var(--accent);
+  margin-left: 2.8rem;
+}
+.q-answer.show { display: block; animation: fadeIn 0.3s ease; }
+.q-answer strong { color: var(--accent-dark); }
+.q-answer .ans-label {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-right: 0.3rem;
+}
+.q-answer .exp {
+  margin-top: 0.5rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Big Questions */
+.big-q-section { padding: 2rem 3rem; }
+.big-q-section .chapter-header { margin-top: 0; }
+.big-q-card {
+  background: var(--card-bg);
+  border-radius: var(--radius);
+  padding: 1.8rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow);
+  border-left: 4px solid var(--accent);
+}
+.big-q-number {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+  margin-bottom: 0.8rem;
+}
+.big-q-content { font-size: 0.95rem; line-height: 1.7; }
+.big-q-content p { margin-bottom: 0.5rem; }
+.big-q-content .answer-label {
+  display: inline-block;
+  margin: 0.8rem 0 0.3rem;
+  font-weight: 700;
+  color: var(--accent-dark);
+}
+.big-q-content .ans-block {
+  background: #faf8f5;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  border-left: 3px solid var(--accent);
+  line-height: 1.7;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Scrollbar */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-track { background: transparent; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); width: 260px; transition: transform 0.3s; }
+  .sidebar.open { transform: translateX(0); }
+  .main { margin-left: 0; }
+  .hero, .chapter, .big-q-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .q-options, .q-answer { padding-left: 0; margin-left: 0; }
+  .hero h2 { font-size: 1.6rem; }
+  .hero-stats { flex-wrap: wrap; gap: 1rem; }
+  .menu-btn {
+    display: flex !important;
+    position: fixed;
+    top: 1rem; left: 1rem;
+    z-index: 200;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.7rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    font-size: 1.2rem;
+    color: var(--text);
+  }
+}
+.menu-btn { display: none; }
+.overlay { display: none; }
+@media (max-width: 768px) {
+  .overlay.show { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 99; }
+}
+</style>
+</head>
+<body>
+
+<button class="menu-btn" onclick="toggleMenu()">☰</button>
+<div class="overlay" onclick="toggleMenu()"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>OS Review</h1>
+    <span>操作系统复习</span>
+  </div>
+  <nav class="sidebar-nav" id="sidebarNav"></nav>
+  <div class="mode-toggle-wrap">
+    <div class="mode-toggle">
+      <button class="mode-btn active" data-mode="quiz" onclick="setMode('quiz')">答题模式</button>
+      <button class="mode-btn" data-mode="browse" onclick="setMode('browse')">浏览模式</button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+  <section class="hero">
+    <h2>操作系统复习</h2>
+    <p>涵盖进程管理、内存管理、文件系统、I/O 设备等核心章节 · 共 <span id="totalQuestions">69</span> 道选择题 + 8 道大题</p>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num" id="totalAnswered">0</span>/<span id="totalQuestions2">69</span> 已答</div>
+      <div class="stat"><span class="stat-num" id="totalCorrect">0</span> 正确</div>
+      <div class="stat"><span class="stat-num" id="accuracy">0%</span> 正确率</div>
+    </div>
+  </section>
+
+  <div id="content"></div>
+</main>
+
+<script>
+const MODE_KEY = 'os_review_mode';
+const ANSWERS_KEY = 'os_review_answers';
+let currentMode = localStorage.getItem(MODE_KEY) || 'quiz';
+let userAnswers = JSON.parse(localStorage.getItem(ANSWERS_KEY) || '{}');
+let revealedExps = JSON.parse(localStorage.getItem('os_review_revealed') || '{}');
+
+const DATA = [
+  {
+    id: 'ch1', title: '第1章 操作系统引论（10题）',
+    questions: [
+      { q: '1．（名校考研真题，单项选择题，2分）对于一台PC而言，下列各项中（  ）对系统必不可少。', o: ['A. OS', 'B. Office软件', 'C. C语言编辑器', 'D. 杀毒软件'], a: 0, exp: '【参考答案】A 【解析】OS作为用户与计算机硬件系统之间的接口，负责管理计算机资源，实现对计算机资源的抽象。' },
+      { q: '2．（名校考研真题，单项选择题，2分）从用户的角度看，OS是（  ）。', o: ['A. 用户与计算机硬件系统之间的接口', 'B. 控制和管理计算机系统资源的软件', 'C. 合理组织计算机工作流程的软件', 'D. 一个大型的工具软件'], a: 0, exp: '【参考答案】A 【解析】OS处于用户和计算机硬件系统之间，用户通过OS来使用计算机系统。从用户角度看，OS是用户与计算机硬件系统之间的接口。' },
+      { q: '3．（全国统考真题，单项选择题，2分）计算机开机后，OS最终被加载到（  ）。', o: ['A. BIOS', 'B. ROM', 'C. EPROM', 'D. RAM'], a: 3, exp: '【参考答案】D 【解析】计算机开机后，OS程序就会被自动加载到内存中的系统程序区，即RAM。' },
+      { q: '4．（名校考研真题，单项选择题，2分）配置了OS的计算机是一台比原来的物理计算机功能更加强大的计算机，这样的计算机只是一台逻辑上的计算机，称为（  ）计算机。', o: ['A. 虚拟', 'B. 物理', 'C. 并行', 'D. 共享'], a: 0, exp: '【参考答案】A 【解析】OS实现了对计算机资源的抽象，用户不必关心物理接口的实现细节。计算机配置了OS之后，用户所看到的计算机就是一台比原来的物理计算机（裸机）功能更强大、使用更方便的虚拟计算机。' },
+      { q: '5．（全国统考真题，单项选择题，2分）与单道程序系统相比，多道程序系统的优点是（  ）。Ⅰ．CPU利用率高 Ⅱ．系统开销小 Ⅲ．系统吞吐量大 Ⅳ．I/O设备利用率高', o: ['A. 仅Ⅰ、Ⅲ', 'B. 仅Ⅰ、Ⅳ', 'C. 仅Ⅱ、Ⅲ', 'D. 仅Ⅰ、Ⅲ、Ⅳ'], a: 3, exp: '【参考答案】D 【解析】多道程序系统通过组织作业（编码或数据）使CPU总有一个作业可执行，从而提高了CPU利用率、系统吞吐量和I/O设备利用率，Ⅰ、Ⅲ、Ⅳ是优点。但系统要付出额外的开销来组织作业和切换作业，故Ⅱ错误。因此选D。' },
+      { q: '6．（名校考研真题，单项选择题，2分）引入多道程序技术的前提条件之一是系统具有（  ）。', o: ['A. 分时功能', 'B. 中断功能', 'C. 多CPU技术', 'D. SPOOLing技术'], a: 1, exp: '【参考答案】B 【解析】中断是多道程序技术得以实现的基础，因为多个进程之间的切换是通过中断来完成的。' },
+      { q: '7．（名校考研真题，单项选择题，2分）下列对OS的叙述中，正确的是（  ）。', o: ['A. OS都在内核态运行', 'B. 分时系统中常用的原则是使时间片越小越好', 'C. 批处理系统的主要缺点是缺少交互性', 'D. DOS是一个单用户多任务的OS'], a: 2, exp: '【参考答案】C 【解析】OS的内核运行在内核态，应用程序运行在用户态；分时系统中并不是时间片越小越好。系统进程较多时，若时间片较小，则CPU会频繁切换进程，进而会导致系统性能下降；在批处理系统中，用户将作业提交直至作业完成，都不能与自己的作业交互；DOS是一个单用户单任务的OS。' },
+      { q: '8．（名校考研真题，单项选择题，2分）OS的基本类型主要有（  ）。', o: ['A. 批处理系统、分时系统和多任务系统', 'B. 批处理系统、分时系统和实时系统', 'C. 单用户系统、多用户系统和批处理系统', 'D. 实时系统、分时系统和多用户系统'], a: 1, exp: '【参考答案】B 【解析】OS的基本类型主要有批处理系统、分时系统和实时系统。' },
+      { q: '9．（全国统考真题，单项选择题，2分）下列关于批处理系统的叙述中，正确的是（  ）。Ⅰ．批处理系统允许多个用户与计算机直接交互 Ⅱ．批处理系统分为单道批处理系统和多道批处理系统 Ⅲ．中断技术使得多道批处理系统和I/O设备可与CPU并行工作', o: ['A. 仅Ⅱ、Ⅲ', 'B. 仅Ⅰ', 'C. 仅Ⅰ、Ⅱ', 'D. 仅Ⅰ、Ⅲ'], a: 0, exp: '【参考答案】A 【解析】在批处理系统中，作业执行时用户无法干预其运行，只能通过事先编制作业控制说明书来间接干预其运行，缺少交互能力。' },
+      { q: '10．（名校考研真题，单项选择题，2分）（  ）系统允许一台主机上同时连接多台终端，多个用户可以通过各自的终端同时交互地使用计算机。', o: ['A. 网络', 'B. 分布式', 'C. 分时', 'D. 实时'], a: 2, exp: '【参考答案】C 【解析】分时系统能很好地将一台主机提供给多个用户使用，以提高计算机的利用率，实现人机交互和主机共享。' }
+    ]
+  },
+  {
+    id: 'ch2', title: '第2章 进程的描述与控制（10题）',
+    questions: [
+      { q: '1．（名校考研真题，单项选择题，2分）程序运行时独占系统资源，只有程序本身才能改变系统资源状态，这是指（  ）。', o: ['A. 程序顺序执行时的再现性', 'B. 并发程序失去再现性', 'C. 并发程序失去封闭性', 'D. 程序顺序执行时的封闭性'], a: 3, exp: '【参考答案】D 【解析】程序顺序执行时的封闭性是指程序在封闭的环境下运行，即程序运行时独占计算机系统的全部资源，只有本程序才能改变系统资源状态（除初始状态外）；程序一旦开始执行，其执行结果就不受外界因素影响。' },
+      { q: '2．（名校考研题，单项选择题，3分）进程和程序的本质区别在于（  ）。', o: ['A. 前者分时使用CPU，或者独占CPU', 'B. 前者存储在内存，后者存储在外存', 'C. 前者具有异步性，后者具有可再现性', 'D. 前者可以并发执行，后者不能并发执行'], a: 3, exp: '【参考答案】D 【解析】OS为了提高系统吞吐量和资源利用率，引入了进程来支持并发。程序是不能并发的，程序只有当被创建为进程后，才能并发执行。' },
+      { q: '3．（名校考研真题，单项选择题，2分）进程的状态和优先级信息存放在（  ）中。', o: ['A. JCB', 'B. PCB', 'C. 快表', 'D. 页表'], a: 1, exp: '【参考答案】B 【解析】PCB是进程存在的唯一标志，它存储着进程的状态和优先级等信息。' },
+      { q: '4．（名校考研真题，单项选择题，2分）一般情况下，分时系统中处于（  ）的进程最多。', o: ['A. 执行状态', 'B. 就绪状态', 'C. 阻塞状态', 'D. 终止状态'], a: 1, exp: '【参考答案】B 【解析】分时系统允许多个用户同时通过自己的终端以交互方式使用一台计算机，共享系统资源。分时系统通常将CPU的工作时间划分成若干个时间片，轮流为就绪队列中的进程服务。当某个进程获得时间片而进入执行状态时，就绪队列中的其他进程就会处于就绪状态，等待时间片的到来。因此在一般情况下，分时系统中处于就绪状态的进程最多。' },
+      { q: '5．（名校考研真题，单项选择题，2分）在单处理机系统中，关于进程的叙述，正确的是（  ）。', o: ['A. 一个处于就绪状态的进程一旦分配了CPU，即进入运行状态', 'B. 只能有一个进程处于就绪状态', 'C. 一个进程可以同时处于就绪状态和阻塞状态', 'D. 最多只有一个进程能处于运行状态'], a: 3, exp: '【参考答案】D 【解析】在单处理机系统中，任何时刻最多只能有一个进程获得CPU而处于运行状态，但可以有多个进程处于就绪状态；一个进程不可以同时处于就绪状态和等待状态。' },
+      { q: '6．（名校考研真题，单项选择题，2分）已经获得除（  ）以外的运行所需所有资源的进程处于就绪状态。', o: ['A. 存储器', 'B. 打印机', 'C. CPU', 'D. 磁盘空间'], a: 2, exp: '【参考答案】C 【解析】已经获得除CPU以外的运行所需所有资源的进程处于就绪状态，其获得CPU后即会进入执行状态。' },
+      { q: '7．（名校考研真题，单项选择题，2分）当一个进程（  ）时，称其处于阻塞状态。', o: ['A. 等待进入内存', 'B. 等待协作进程的一个消息', 'C. 等待一个时间片', 'D. 等待CPU调度'], a: 1, exp: '【参考答案】B 【解析】进程等待协作进程的一个消息时，该进程处于阻塞状态；当进程等待的协作进程的消息到来时，该进程从阻塞状态转换为就绪状态。' },
+      { q: '8．（全国统考真题，单项选择题，2分）一个进程的读磁盘操作完成后，OS针对该进程必做的是（  ）。', o: ['A. 修改进程状态为就绪状态', 'B. 降低进程优先级', 'C. 为进程分配用户内存空间', 'D. 延长进程的时间片'], a: 0, exp: '【参考答案】A 【解析】进程等待读磁盘操作完成后便会从阻塞状态转换为就绪状态。' },
+      { q: '9．（全国统考真题，单项选择题，2分）下列选项中，会导致进程从执行状态变为就绪状态的事件是（  ）。', o: ['A. 执行P操作', 'B. 申请内存失败', 'C. 启动I/O设备', 'D. 被高优先级进程抢占'], a: 3, exp: '【参考答案】D 【解析】A、B、C都会因为进程请求资源而进入阻塞状态；进程被高优先级进程抢占，即被剥夺了处理机资源而进入就绪状态，其一旦重新获得处理机资源便会继续执行。' },
+      { q: '10．（全国统考真题，单项选择题，2分）下列选项中，可能导致当前进程P阻塞的事件是（  ）。Ⅰ．进程P申请临界资源 Ⅱ．进程P从磁盘读数据 Ⅲ．系统将CPU分配给高优先级进程', o: ['A. 仅Ⅰ', 'B. 仅Ⅱ', 'C. 仅Ⅰ、Ⅱ', 'D. Ⅰ、Ⅱ、Ⅲ'], a: 2, exp: '【参考答案】C 【解析】Ⅰ和Ⅱ中的进程都属于正在申请资源的进程，容易发生阻塞，而Ⅲ则只会让进程进入就绪队列，当高优先级进程退出CPU后，进程P仍可获得CPU。' }
+    ]
+  },
+  {
+    id: 'ch3', title: '第3章 处理机调度与死锁（10题）',
+    questions: [
+      { q: '1．（名校考研真题，单项选择题，2分）若某单处理机多进程系统中有多个处于就绪状态的进程，则下列关于处理机调度的叙述中，错误的是（  ）。', o: ['A. 在进程结束时能进行处理机调度', 'B. 创建新进程后能进行处理机调度', 'C. 在进程处于临界区时不能进行处理机调度', 'D. 在系统调用完成并返回用户态时能进行处理机调度'], a: 2, exp: '【参考答案】C 【解析】选项A、B、D显然属于可以进行处理机调度的情况。对于选项C，当进程处于临界区时，说明进程正在占用处理机，只要不破坏临界资源的使用规则，就不会影响处理机的调度。比如，通常访问的临界资源可能是慢速的外设（如打印机），若进程在访问打印机时不能进行处理机调度，则系统的性能将会变得非常差。' },
+      { q: '2．（名校考研真题，单项选择题，2分）下面的情况中，进程调度可能发生的时机有（  ）。Ⅰ．正在执行的进程时间片用完 Ⅱ．正在执行的进程提出I/O请求后进入等待状态 Ⅲ．有新的用户登录系统 Ⅳ．等待硬盘读数据的进程获得了所需的数据', o: ['A. Ⅰ', 'B. Ⅰ、Ⅱ、Ⅲ、Ⅳ', 'C. Ⅰ、Ⅱ、Ⅳ', 'D. Ⅰ、Ⅲ、Ⅳ'], a: 1, exp: '【参考答案】B 【解析】正在执行的进程在时间片用完后进入就绪状态，系统会调入一个新的进程来为其分配处理机并执行；正在执行的进程提出I/O请求后进入等待状态，系统同样会调入一个新的进程来为其分配处理机并执行；有新的用户登录进入系统会创建新的进程，若处理机空闲，则可进行进程调度；等待硬盘读数据的进程获得了所需的数据后，若处理机空闲，则可进行进程调度。' },
+      { q: '3．（全国统考真题，单项选择题，2分）假设4个作业到达系统的时刻和运行时间如表2-3-1所示。系统在t=2时开始调度作业。若分别采用FCFS和SJF调度算法，则选中的作业分别是（  ）。', o: ['A. J2、J3', 'B. J1、J4', 'C. J2、J4', 'D. J1、J3'], a: 3, exp: '【参考答案】D 【解析】FCFS调度算法是作业来得越早，优先级越高，因此其会选中J1。SJF调度算法是作业运行时间越短，优先级越高，因此其会选中J3。' },
+      { q: '4．（名校考研真题，单项选择题，2分）时间片RR调度算法是为了（  ）而设计的。', o: ['A. 多个用户能及时干预系统', 'B. 使系统变得高效', 'C. 优先级较高的进程得到及时响应', 'D. 使所需CPU时间最少'], a: 0, exp: '【参考答案】A 【解析】时间片轮转的主要目的是，使多个交互的用户能够得到及时响应，因此它不会对特殊进程做特殊服务。时间片轮转增加了系统开销，吞吐量和周转时间均不如批处理。但其比较快速的响应能使用户与计算机快速交互，改善了人机环境，满足了用户需求。' },
+      { q: '5．（名校考研真题，单项选择题，2分）OS中调度算法是核心算法之一，下列关于调度算法的论述中，正确的是（  ）。', o: ['A. FCFS调度算法既对长作业有利，又对短作业有利', 'B. 时间片RR调度算法只对长作业有利', 'C. 实时调度算法也要考虑作业的长短问题', 'D. 高响应比优先调度算法既有利于短作业，又兼顾长作业，还实现了FCFS'], a: 3, exp: '【参考答案】D 【解析】FCFS调度算法对短作业不利，若当前系统中有先到达的长作业，则后到达的短作业要一直等待，直到所有先到达的长作业执行完毕后才能执行；时间片RR调度算法是一种公平的处理机分配方式，对长、短作业都有利；实时调度算法是根据进程的紧迫程度，为其设定执行的优先级，与作业的长短无关；高响应比优先调度算法综合考虑了进程的等待时间与执行时间，对长、短作业均有利。' },
+      { q: '6．（全国统考真题，单项选择题，2分）下列有关基于时间片的进程调度的叙述中，错误的是（  ）。', o: ['A. 时间片越短，进程切换的次数越多，系统开销越大', 'B. 当前进程的时间片用完后，该进程的状态由执行状态变为阻塞状态', 'C. 时钟中断发生后，系统会修改当前进程在时间片内的剩余时间', 'D. 影响时间片大小的主要因素包括响应时间、系统开销和进程数量等'], a: 1, exp: '【参考答案】B 【解析】进程切换次数越多，开销越大。当前进程的时间片用完后，其会由执行状态变为就绪状态。时钟中断是系统中特定的周期性时钟节拍，OS通过它来确定时间间隔，实现时间调节。现代OS为了保证性能最优，通常根据响应时间、系统开销、进程数量、进程运行时间、进程切换开销等因素来确定时间片大小。' },
+      { q: '7．（名校考研真题，单项选择题，2分）对于相同的进程序列，下列进程调度算法中平均周转时间最短的是（  ）。', o: ['A. FCFS调度算法', 'B. SJF调度算法', 'C. 优先级调度算法', 'D. RR调度算法'], a: 1, exp: '【参考答案】B 【解析】平均周转时间=所有进程周转时间之和/进程数量。在这4种进程调度算法中，SJF调度算法具有最短的平均周转时间。' },
+      { q: '8．（名校考研真题，单项选择题，2分）（  ）优先级是在创建进程时确定的，确定之后在进程的整个运行期间不再改变。', o: ['A. 动态', 'B. FCFS', 'C. 短作业', 'D. 静态'], a: 3, exp: '【参考答案】D 【解析】在优先级调度算法中，优先级分为静态优先级和动态优先级。静态优先级是在创建进程时确定的，在进程的整个运行期间保持不变。动态优先级会随进程的推进或等待时间的增加而改变，以便获得更好的调度性能。' },
+      { q: '9．（全国统考真题，单项选择题，2分）下列选项中，降低进程优先级的合理时机是（  ）。', o: ['A. 进程时间片用完', 'B. 进程刚完成I/O操作，进入就绪队列', 'C. 进程长期处于就绪队列', 'D. 进程从就绪状态转为运行状态'], a: 0, exp: '【参考答案】A 【解析】A中进程的时间片用完，可降低其优先级，让其他进程被调度而进入执行状态。B中进程刚完成I/O操作，进入就绪队列等待被调度；为了让其尽快处理I/O结果，应提高其优先级。C中进程长期处于就绪队列，为了不至于产生饥饿现象，也应适当提高进程优先级。D中进程的优先级不应在此时降低，而应在时间片用完后再降低。' },
+      { q: '10．（全国统考真题，单项选择题，2分）某系统正在执行3个进程P1、P2、P3，各进程的计算时间和I/O时间占比如表2-3-2所示。为了提高系统资源利用率，合理的进程优先级设置应为（  ）。', o: ['A. P1＞P2＞P3', 'B. P3＞P2＞P1', 'C. P2＞P1=P3', 'D. P1＞P2=P3'], a: 1, exp: '【参考答案】B 【解析】对于优先级调度算法，一般来说，I/O型作业的优先级高于计算型作业的优先级，这是由于I/O操作没有办法长时间地保存所要输入/输出的数据，因此要及时完成。另外考虑到系统的资源利用率，因此要使I/O繁忙型作业具有更高的优先级。' }
+    ]
+  },
+  {
+    id: 'ch4', title: '第4章 进程同步（10题）',
+    questions: [
+      { q: '1．（全国统考真题，单项选择题，2分）属于同一进程的两个线程Thread1和Thread2并发执行，共享初值为0的全局变量x。Thread1和Thread2实现对全局变量x加1的机器代码描述如下。在所有可能的指令执行序列中，使x的值为2的序列个数是（  ）。', o: ['A. 1', 'B. 2', 'C. 3', 'D. 4'], a: 1, exp: '【参考答案】B 【解析】Thread1和Thread2互斥执行对x的共享，因此序列个数为2。' },
+      { q: '2．（名校考研真题，单项选择题，3分）两段程序分别如下，其中，R是寄存器，counter是共享变量且其初值为1。试问在这两段程序对应的进程并发执行完成后，counter的值不可能为（  ）。', o: ['A. 0', 'B. 1', 'C. 2', 'D. 除0、1、2外的所有值'], a: 3, exp: '【参考答案】D 【解析】将程序A的3条语句编号为A1、A2、A3，将程序B的3条语句编号为B1、B2、B3。则可以获得以下不同的执行顺序：（1）A1、A2、A3、B1、B2、B3，执行结果counter=1；（2）A1、A2、B1、B2、A3、B3，执行结果counter=0；（3）B1、B2、A1、A2、A3、B3，执行结果counter=2。' },
+      { q: '3．在OS中，要对并发进程进行同步的原因是（  ）。', o: ['A. 进程必须在有限的时间内完成', 'B. 进程具有动态性', 'C. 并发进程是异步的', 'D. 进程具有结构性'], a: 2, exp: '【参考答案】C 【解析】进程同步是指进程之间以一种直接的协同工作关系并发执行，共同完成一项任务，这些进程是异步的。' },
+      { q: '4．（全国统考真题，单项选择题，2分）进程P0和P1的共享变量定义及其初值为：boolean flag[2]；int turn=0；flag[0]=FALSE；flag[1]=FALSE；若进程P0和P1访问临界资源的类C代码实现如下：则并发执行进程P0和P1时发生的情况是（  ）。', o: ['A. 不能保证进程互斥地进入临界区，会出现"饥饿"现象', 'B. 不能保证进程互斥地进入临界区，不会出现"饥饿"现象', 'C. 能保证进程互斥地进入临界区，会出现"饥饿"现象', 'D. 能保证进程互斥地进入临界区，不会出现"饥饿"现象'], a: 3, exp: '【参考答案】D 【解析】算法实现互斥的主要思想在于设置一个turn变量，用于进程间的互相谦让。如果进程P0试图访问临界资源，flag[0]=TRUE，则表示希望访问。此时，如果进程P1还未试图访问临界资源，则flag[1]在进程上一次访问完临界资源并退出临界区后已设置为FALSE。因此进程P0在执行循环判断条件时，第一个条件不满足，进程P0可以正常进入临界区，且满足互斥条件。请注意两个进程同时试图访问临界资源的情况。turn变量的含义：进程在试图访问临界资源时，首先设置自己的flag变量为TRUE，表示希望访问；但又会设置turn变量为对方的进程编号，表示谦让，若在turn变量不是进程编号时就循环等待，则两个进程就会互相谦让，由于turn变量会有一个最终值，因此先做出谦让的进程先进入临界区，后做出谦让的进程则需要循环等待，不会造成"饥饿"现象。' },
+      { q: '5．（全国统考真题，单项选择题，2分）进程P1和进程P2均包含并发执行的线程，部分伪代码描述如下：下列选项中，必须要互斥执行的操作是（  ）。', o: ['A. a=1与a=2', 'B. a=x与b=x', 'C. x+=1与x+=2', 'D. x+=1与x+=3'], a: 2, exp: '【参考答案】C 【解析】当两个操作的执行顺序不同而导致结果不同时，就必须互斥执行。A选项，进程P1中两个对a赋值的操作并不影响最终结果，不必互斥执行；B选项，两个赋值操作的执行顺序不影响a与b的结果，不必互斥执行；C选项，对x进行不同的加法操作，执行顺序不同，最终x的结果也会不同，必须互斥执行；D选项，两个操作不在同一进程中，互不影响，不必互斥执行。' },
+      { q: '6．（名校考研真题，单项选择题，3分）关于临界区，正确的说法是（  ）。', o: ['A. 访问不同临界资源的两个进程不要求必须互斥地进入临界区', 'B. 临界区是包含临界资源的一段数据区', 'C. 临界区是一种用于进程同步的机制', 'D. 临界区是访问临界资源的一个进程或线程'], a: 0, exp: '【参考答案】A 【解析】A选项正确，访问不同临界区的两个进程，不要求必须互斥地进入临界区。B选项中，临界区是访问临界资源的那段程序，而不是包含临界资源的那段数据区。临界区不是用于进程同步的机制。' },
+      { q: '7．（名校考研真题，单项选择题，1分）临界区是指并发进程中访问共享变量的（  ）段。', o: ['A. 信息管理', 'B. 信息存储', 'C. 数据', 'D. 程序'], a: 3, exp: '【参考答案】D 【解析】临界区是代码段、程序段，其特点是访问了临界资源或共享变量。' },
+      { q: '8．（全国统考真题，单项选择题，2分）在下列同步机制中，可以实现让权等待的是（  ）。', o: ['A. Peterson方法', 'B. Swap指令', 'C. 信号量机制', 'D. Test-and-Set指令'], a: 2, exp: '【参考答案】C 【解析】实现让权等待的主要方法是信号量机制。Peterson方法是软件方法，Swap指令和Test-and-Set指令是硬件指令，没有实现让权等待。' },
+      { q: '9．（全国统考真题，单项选择题，2分）下列准则中实现临界区互斥机制所必须遵循的是（  ）。Ⅰ．两个进程不能同时进入临界区 Ⅱ．允许进程访问空闲的临界资源 Ⅲ．进程等待进入临界区的时间是有限的 Ⅳ．不能进入临界区且处于执行状态的进程立即放弃CPU', o: ['A. Ⅰ、Ⅳ', 'B. Ⅱ、Ⅲ', 'C. Ⅰ、Ⅱ、Ⅲ', 'D. Ⅰ、Ⅲ、Ⅳ'], a: 2, exp: '【参考答案】C 【解析】实现临界区互斥机制所必须遵循的准则：①空闲让进→Ⅱ；②忙则等待→Ⅰ；③有限等待→Ⅲ；④让权等待。' },
+      { q: '10．下列（  ）准则不是同步机制所应遵循的准则。', o: ['A. 让权等待', 'B. 空闲让进', 'C. 忙则等待', 'D. 无限等待'], a: 3, exp: '【参考答案】D 【解析】同步机制遵循的准则是空闲让进、忙则等待、有限等待、让权等待。' }
+    ]
+  },
+  {
+    id: 'ch5', title: '第5章 存储器管理（10题）',
+    questions: [
+      { q: '1．（名校考研真题，单项选择题，3分）在程序运行前，先将一个程序的所有模块以及所需的库函数链接成一个完整的装配模块，这种链接方式称为（  ）。', o: ['A. 静态链接', 'B. 装入时动态链接', 'C. 可重定位链接', 'D. 运行时动态链接'], a: 0, exp: '【参考答案】A 【解析】静态链接是指在程序运行之前，先将各目标模块及它们所需的库函数链接成一个完整的装入模块，以后不再拆开。装入时动态链接是指将用户源程序编译后所得到的一组目标模块，在装入内存时，采用边装入边链接的链接方式。运行时动态链接是指在程序执行过程中，当需要用到某目标模块时，再对其进行链接。可重定位链接是指在多道程序环境下，根据内存的当前情况，将装入模块装入内存的适当位置。' },
+      { q: '2．（名校考研真题，单项选择题，2分）关于程序链接，下列说法正确的是（  ）。', o: ['A. 根据目标模块大小和链接次序对相对地址进行修改', 'B. 根据装入位置把目标模块中的相对地址转换为绝对地址', 'C. 把每个目标模块中的相对地址转换为外部调用符号', 'D. 采用静态链接方式更有利于目标模块的共享'], a: 0, exp: '【参考答案】A 【解析】链接程序将编译后形成的目标模块和所需的库函数链接在一起，组成装入模块，再由装入程序将装入模块装入内存。在进行程序链接时，应完成对相对地址的修改和外部调用符号到相对地址的转换。' },
+      { q: '3．（名校考研真题，单项选择题，2分）在多道程序环境中，用户程序的相对地址与装入内存后的实际物理地址不同，把相对地址转换为物理地址，这是OS的（  ）功能。', o: ['A. 进程调度', 'B. 设备管理', 'C. 地址重定位', 'D. 资源管理'], a: 2, exp: '【参考答案】C 【解析】地址重定位功能是指将用户程序的相对地址（逻辑地址）转换为绝对地址（物理地址）。' },
+      { q: '4．（名校考研真题，单项选择题，3分）对换技术的主要作用是（  ）。', o: ['A. 将内存碎片合并为大的空闲空间', 'B. 提高内存利用率', 'C. 减少查找空闲分区的时间', 'D. 提高外部设备利用率'], a: 1, exp: '【参考答案】B 【解析】对换是指把内存中暂时不能运行的进程或者暂时不用的程序和数据调出到外存，以腾出足够的内存空间，再把已具备运行条件的进程或进程所需要的程序和数据调入内存。对换是提高内存利用率的有效措施。' },
+      { q: '5．（全国统考真题，单项选择题，2分）分区分配内存管理方式的主要保护措施是（  ）。', o: ['A. 界地址保护', 'B. 程序代码保护', 'C. 数据保护', 'D. 栈保护'], a: 0, exp: '【参考答案】A 【解析】分区分配存储管理方式的保护措施是设置界地址寄存器。每个进程都有自己独立的进程空间，如果一个进程在运行时所产生的地址在其地址空间之外，则发生地址越界。当程序要访问某个内存单元时，由硬件检查是否允许，如果允许则执行，否则产生地址越界中断，由OS进行相应处理。' },
+      { q: '6．（名校考研真题，单项选择题，1分）在适合多道程序运行的分区存储管理系统中，存储保护是为了（  ）。', o: ['A. 防止多道作业占用同一处理机', 'B. 防止各道作业相互干扰', 'C. 防止一道作业占用多个分区', 'D. 防止作业非法访问磁盘文件'], a: 1, exp: '【参考答案】B 【解析】在多道程序系统中，内存中既有OS，又有许多用户程序，为使系统正常运行，避免内存中各程序相互干扰，必须从防止地址越界和防止操作越权这两个方面对内存中的程序 and 数据进行保护。' },
+      { q: '7．（名校考研真题，单项选择题，2分）分区管理要求对每个作业都分配（  ）的内存单元。', o: ['A. 地址连续', 'B. 若干地址不连续', 'C. 若干连续的帧', 'D. 若干不连续的帧'], a: 0, exp: '【参考答案】A 【解析】分区分配方式属于连续分配管理方式，分为固定分区分配和动态分区分配，这两种分区分配方式都会为每个作业分配地址连续的内存单元。' },
+      { q: '8．（名校考研真题，单项选择题，1分）不是基于顺序搜索的动态分区分配算法是（  ）。', o: ['A. 首次适应算法', 'B. 循环首次适应算法', 'C. 最坏适应算法', 'D. 快速适应算法'], a: 3, exp: '【参考答案】D 【解析】快速适应算法是一种基于索引搜索的动态分区分配算法。' },
+      { q: '9．（全国统考真题，单项选择题，2分）某基于动态分区存储管理的计算机，其内存容量为55MB（初始为空闲），采用最佳适应算法，分配和释放的顺序为：分配15MB，分配30MB，释放15MB，分配8MB，分配6MB。此时，内存中的最大空闲分区的大小是（  ）。', o: ['A. 7MB', 'B. 9MB', 'C. 10MB', 'D. 15MB'], a: 1, exp: '【参考答案】B 【解析】初始内存容量为55MB（空闲空间），分配过程为：①分配15MB以后还有55MB-15MB=40MB；②分配30MB以后还有40MB-30MB=10MB；③释放15MB以后有2个空闲分区15MB和10MB；④分配8MB，由于采用最佳分配算法，故应选择10MB空闲分区进行分配，10MB-8MB=2MB，因此空闲分区为15MB和2MB；⑤分配6MB，空闲分区为15MB-6MB=9MB和2MB，所以B正确。' },
+      { q: '10．（全国统考真题，单项选择题，2分）某计算机按字节编址，其动态分区存储管理采用最佳适应算法，每次分配和回收内存后都对空闲分区链重新排序。当前的空闲分区信息如表2-5-1所示。回收起始地址为60K、大小为140KB的分区后，系统中空闲分区链第1个分区的起始地址和大小分别是（  ）。', o: ['A. 20K、380KB', 'B. 500K、80KB', 'C. 20K、180KB', 'D. 500K、180KB'], a: 1, exp: '【参考答案】B 【解析】回收起始地址为60K、大小为140KB的分区后，令其与起始地址为20K和起始地址为200K的这2个分区合并成一个起始地址为20K、大小为380KB的分区，重新排序后其会移至最后。因此，第1个分区的起始地址和大小就会变为500K和80KB。' }
+    ]
+  },
+  {
+    id: 'ch6', title: '第6章 虚拟存储器（10题）',
+    questions: [
+      { q: '1．（单项选择题）实现虚拟存储器的目的是（  ）。', o: ['A. 扩充物理内存', 'B. 逻辑上扩充内存', 'C. 逻辑上扩充外存', 'D. 都不对'], a: 1, exp: '【参考答案】B 【解析】物理内存的扩充是通过硬件配置实现的，因此虚拟存储器的目的就是将外存的部分空间作为内存的扩充，向用户提供一个非常大的编程空间，然后通过程序不断地进行换进/换出，进而达到逻辑上扩充内存的目的。' },
+      { q: '2．（单项选择题）下列关于虚拟存储器的论述中，正确的是（  ）。', o: ['A. 作业在运行前，必须全部装入内存，且在运行过程中必须一直驻留内存', 'B. 作业在运行前，不必全部装入内存，且在运行过程中也不必一直驻留内存', 'C. 作业在运行前，不必全部装入内存，但在运行过程中必须一直驻留内存', 'D. 作业在运行前，必须全部装入内存，但在运行过程中不必一直驻留内存'], a: 1, exp: '【参考答案】B 【解析】在虚拟存储器中，作业不必全部装入内存，且在运行过程中也不必一直驻留在内存中，这是虚拟存储器和传统存储器的主要区别。' },
+      { q: '3．（全国统考真题，单项选择题，2分）下列关于虚拟存储的叙述中，正确的是（  ）。', o: ['A. 虚拟存储只能基于连续分配技术', 'B. 虚拟存储只能基于离散分配技术', 'C. 虚拟存储容量只受外存容量的限制', 'D. 虚拟存储容量只受内存容量的限制'], a: 1, exp: '【参考答案】B 【解析】虚拟存储器只能基于离散分配技术。虚拟存储容量是虚拟的空间，与逻辑地址的位数相关，不会只受内存或外存容量的限制。' },
+      { q: '4．（名校考研真题，单项选择题，2分）为使虚拟存储管理系统具有良好的性能，应用程序应具备的特征是（  ）。', o: ['A. 程序模块化程度高，由许多小模块组成', 'B. 良好的局部性', 'C. 程序的I/O操作较少', 'D. 程序实际大小应小于实际物理内存容量'], a: 1, exp: '【参考答案】B 【解析】在虚拟存储管理系统中，应用程序应具备良好的局部性。程序的局部性包括时间局部性和空间局部性。时间局部性是指某条指令被执行不久后，该条指令可能还会被执行；空间局部性是指一旦某个存储单元被访问，在不久之后该存储单元附近的存储单元也将被访问。' },
+      { q: '5．（名校考研真题，单项选择题，2分）虚拟存储管理系统的基础是程序的（  ）原理。', o: ['A. 动态性', 'B. 虚拟性', 'C. 局部性', 'D. 共享性'], a: 2, exp: '【参考答案】C 【解析】虚拟存储管理系统是基于程序的局部性原理而实现的，即程序的时间局部性和空间局部性。' },
+      { q: '6．（全国统考真题，单项选择题，2分）在虚拟内存管理中，地址转换机构可将逻辑地址转换为物理地址。形成该逻辑地址的阶段称为（  ）。', o: ['A. 编辑', 'B. 编译', 'C. 链接', 'D. 装载'], a: 1, exp: '【参考答案】B 【解析】编译过程指编译程序将用户源代码编译成目标程序，在该过程中会形成逻辑地址。' },
+      { q: '7．（名校考研真题，单项选择题，1分）在分页存储管理系统中，虚拟地址变换成物理地址的工作是由（  ）完成的。', o: ['A. 地址转换程序', 'B. 用户程序', 'C. 硬件', 'D. 装入程序'], a: 2, exp: '【参考答案】C 【解析】把虚拟地址转换成物理地址，是硬件自动完成的。计算机硬件自动把地址空间的地址分为页号和页内相对地址，通过页号在页表中找到内存中的对应块号。内存的物理地址计算公式为：内存的物理地址=块号×页面大小+页内偏移地址。' },
+      { q: '8．（名校考研真题，单项选择题，2分）在请求分页存储管理中，若所需页面不在内存中，则会引起（  ）。', o: ['A. I/O中断', 'B. 缺段中断', 'C. 越界中断', 'D. 页故障'], a: 3, exp: '【参考答案】D 【解析】在请求分页存储管理中，若所需页面不在内存中，则会引起页故障，即缺页中断。' },
+      { q: '9．（全国统考真题，单项选择题，2分）在缺页处理过程中，OS执行的操作可能是（  ）。Ⅰ．修改页表 Ⅱ．磁盘I/O Ⅲ．分配页框', o: ['A. 仅Ⅰ、Ⅱ', 'B. 仅Ⅱ', 'C. 仅Ⅲ', 'D. Ⅰ、Ⅱ、Ⅲ'], a: 3, exp: '【参考答案】D 【解析】缺页中断调入新页面，肯定要修改页表项和分配页框，因此Ⅰ、Ⅲ可能发生；同时内存中没有页面，需要从外存读入，会发生磁盘I/O，因此Ⅱ也可能发生。' },
+      { q: '10．（全国统考真题，单项选择题，2分）若用户进程在访问内存时产生缺页，则下列选项中，OS可能执行的操作是（  ）。Ⅰ．处理越界错 Ⅱ．置换页 Ⅲ．分配内存', o: ['A. 仅Ⅰ、Ⅱ', 'B. 仅Ⅱ、Ⅲ', 'C. 仅Ⅰ、Ⅲ', 'D. Ⅰ、Ⅱ、Ⅲ'], a: 1, exp: '【参考答案】B 【解析】用户进程访问内存时缺页会导致产生缺页中断。产生缺页中断时，系统可能会执行的操作是置换页面或分配内存。系统内没有越界的错误，因此不会进行越界错处理。' }
+    ]
+  },
+  {
+    id: 'ch7', title: 'I/O设备管理（P163）',
+    questions: [
+      { q: '1．（全国统考真题，单项选择题，2分）用户程序发出磁盘I/O请求后，系统的正确处理流程是（  ）。', o: ['A. 用户程序→系统调用处理程序→中断处理程序→设备驱动程序', 'B. 用户程序→系统调用处理程序→设备驱动程序→中断处理程序', 'C. 用户程序→设备驱动程序→系统调用处理程序→中断处理程序', 'D. 用户程序→设备驱动程序→中断处理程序→系统调用处理程序'], a: 1, exp: '【参考答案】B 【解析】I/O软件从上到下可分为4个层次：用户层I/O软件、设备独立性软件、设备驱动程序以及中断处理程序。其中，设备独立性软件也就是系统调用的处理程序。因此正确处理流程为B选项。' },
+      { q: '5．（全国统考真题，单项选择题，2分）系统将数据从磁盘读到内存的过程包括以下操作：①DMA控制器发出中断请求；②初始化DMA控制器并启动磁盘；③从磁盘传输一块数据到内存缓冲区；④执行"DMA结束"中断处理程序。正确的执行顺序是（  ）。', o: ['A. ③→①→②→④', 'B. ②→③→①→④', 'C. ②→①→③→④', 'D. ①→②→④→③'], a: 1, exp: '【参考答案】B 【解析】计算机执行程序的主要过程是：①内存向CPU发出读取外设指令，CPU将系统总线控制权交给DMA控制器；②初始化DMA控制器并启动磁盘，将数据从硬盘读入内存缓冲区；③DMA给CPU发送中断请求，CPU从DMA控制器接管总线，执行"DMA结束"中断处理程序；④CPU向内存发出读取数据命令，并对数据进行运算处理，同时和内存进行必要的数据交换；⑤运行结束后，如果有外设存取操作，则CPU会将运算结果（数据）发送到硬盘。' },
+      { q: '6．（名校考研真题，单项选择题，3分）关于I/O控制方式，（  ）控制方式使对I/O操作的组织和数据的传送能最大限度地独立运行而无须处理机干预。', o: ['A. I/O通道', 'B. 中断驱动I/O', 'C. 程序I/O', 'D. 直接存储器访问I/O'], a: 0, exp: '【参考答案】A 【解析】在程序I/O方式（轮询可编程I/O方式）下，CPU要不断地测试I/O设备的状态。中断驱动I/O方式，允许I/O设备中断CPU并请求服务，使CPU向I/O控制器发送读命令后可以继续做其他工作。直接存储器访问I/O方式是在一块数据传送结束时才中断CPU。I/O通道方式是当一组数据传送完毕后才请求CPU干预，可以有效实现CPU、通道和I/O设备三者的并行操作。' },
+      { q: '7．（名校考研真题，单项选择题，3分）为提高OS自身的可适应性和可扩展性，现代OS通过引入（  ）的概念实现了设备独立性。', o: ['A. 共享设备', 'B. 循环缓冲', 'C. 独占设备', 'D. 逻辑设备'], a: 3, exp: '【参考答案】D 【解析】设备独立性，即应用程序独立于具体使用的物理设备。为了实现设备独立性，引入了逻辑设备和物理设备这两个概念。在应用程序中，通过逻辑设备名请求使用某类设备。而系统在实际执行任务时，则必须通过物理设备名来使用实际设备。因此，系统要具有将逻辑设备名转换为对应的物理设备名的功能。' },
+      { q: '8．（全国统考真题，单项选择题，2分）程序员利用系统调用打开I/O设备时，通常使用的设备标志是（  ）。', o: ['A. 逻辑设备名', 'B. 物理设备名', 'C. 主设备号', 'D. 从设备号'], a: 0, exp: '【参考答案】A 【解析】用户程序对I/O设备发送请求时采用逻辑设备名，而系统在实际执行任务时采用物理设备名。' }
+    ]
+  },
+  {
+    id: 'ch8', title: '文件管理（P175）',
+    questions: [
+      { q: '1．（名校考研真题，单项选择题，2分）从用户的角度看，文件系统主要用于实现（  ）。', o: ['A. 数据存储', 'B. 数据保护', 'C. 数据共享', 'D. 按名存取'], a: 3, exp: '【参考答案】D 【解析】用户仅须向系统提供所需要访问的文件名称，就可以快速准确地找到指定文件在外存上的存储位置，这是文件系统向用户提供的最基本的服务。' },
+      { q: '2．（名校考研真题，单项选择题，1分）下列表示中可以作为文件名的有（  ）。', o: ['A. /usr/ast/mbox', 'B. :/usr/mbox', 'C. mbox', 'D. A、B、C都可以'], a: 2, exp: '【参考答案】C 【解析】文件名中不能包含下列任何字符：/ \\ : * ? < >。' },
+      { q: '3．（全国统考真题，单项选择题，2分）在文件系统中，文件访问控制信息所被存储的合理位置是（  ）。', o: ['A. FCB', 'B. 文件分配表', 'C. 用户口令表', 'D. 系统注册表'], a: 0, exp: '【参考答案】A 【解析】在FCB中，通常含有3类信息：基本信息、存取访问控制信息及使用信息。本题中，文件访问控制信息所被存储的合理位置是FCB。' },
+      { q: '4．（全国统考真题，单项选择题，2分）在一个文件被用户进程首次打开的过程中，OS需要做的是（  ）。', o: ['A. 将文件内容读到内存中', 'B. 将FCB读到内存中', 'C. 修改FCB中的读/写权限', 'D. 将文件的数据缓冲区首指针返回给用户进程'], a: 1, exp: '【参考答案】B 【解析】FCB是指用来存放控制文件需要的各种信息的数据结构，与文件一一对应。用户程序首次打开一个文件时，OS会将其FCB读到内存中。' }
+    ]
+  }
+];
+
+const BIG_QUESTIONS = [
+  {
+    num: '第1题', title: 'CPU利用率计算',
+    content: `<p>1、现有A、B两个程序，程序A按顺序使用CPU 10s，使用设备甲5s，使用CPU 5s，使用设备乙10s，最后使用CPU 10s。程序B按顺序使用设备甲 10s，使用CPU 10s，使用设备乙10s，使用CPU 5s，使用设备乙10s，试问：</p><p>（1）在顺序执行程序A和程序B的情况下，CPU的利用率是多少？<br>（2）在多道程序环境下，CPU的利用率是多少？<br>（3）在多道批处理系统中，是否并发的进程越多，资源利用率越好？为什么？</p>`,
+    answer: `<p><strong>（1）</strong>顺序执行：A总时间40s，B总时间45s，CPU使用时间=(10+5+10)+(10+5)=40s<br>CPU利用率=40/(40+45)×100%≈<strong>47.1%</strong></p><p><strong>（2）</strong>多道程序环境下，A、B并发执行总耗时50s，CPU使用40s<br>CPU利用率=40/50×100%=<strong>80%</strong></p><p><strong>（3）</strong>不是。并发进程过多导致频繁上下文切换，系统开销增大，资源利用率反而下降。</p>`
+  },
+  {
+    num: '第2题', title: '进程三大状态',
+    content: `<p>2、请结合进程的三大状态，回答下列问题：</p><p>（1）若系统中没有运行进程，那么是否一定没有就绪进程？为什么？<br>（2）若系统中既没有运行进程，又没有就绪进程，那么系统中是否就没有进程？为什么？<br>（3）在采用优先级进程调度算法时，正在运行的进程是否一定是系统中优先级最高的进程？</p>`,
+    answer: `<p><strong>（1）</strong>是。若无运行进程，调度器会从就绪队列选择一个运行，只有就绪队列为空时CPU才空闲。</p><p><strong>（2）</strong>不一定。所有进程可能都处于阻塞/等待状态（如等待I/O或死锁）。</p><p><strong>（3）</strong>不一定。高优先级进程可能处于阻塞队列，调度器只从就绪队列中选择。</p>`
+  },
+  {
+    num: '第3题', title: '多级反馈队列调度算法',
+    content: `<p>3、多级反馈队列调度算法是如何工作的？</p>`,
+    answer: `<p><strong>（1）</strong>设置多个就绪队列，优先级逐级降低，时间片逐级增大（优先级越高时间片越小）。</p><p><strong>（2）</strong>新进程进入最高优先级队列（FCFS），时间片内未完成则降级到下一队列，依次类推。</p><p><strong>（3）</strong>仅当高优先级队列为空时才调度低优先级队列。若低优先级运行时有新进程进入高优先级队列，则新进程抢占CPU，当前进程放回原队列末尾。</p>`
+  },
+  {
+    num: '第4题', title: '进程与程序的关系',
+    content: `<p>4、进程和程序之间可以形成一对一、一对多、多对一、多对多的关系，请分别举例说明。</p>`,
+    answer: `<table style="width:100%;border-collapse:collapse;margin:0.5rem 0;"><tr><th style="text-align:left;padding:0.3rem 0.5rem;border-bottom:1px solid #ddd;">关系</th><th style="text-align:left;padding:0.3rem 0.5rem;border-bottom:1px solid #ddd;">举例</th></tr><tr><td style="padding:0.3rem 0.5rem;"><strong>一对一</strong></td><td style="padding:0.3rem 0.5rem;">运行一条命令或一个应用程序</td></tr><tr><td style="padding:0.3rem 0.5rem;"><strong>一对多</strong></td><td style="padding:0.3rem 0.5rem;">一个进程先后加载不同程序（如shell依次执行ls、cat）</td></tr><tr><td style="padding:0.3rem 0.5rem;"><strong>多对一</strong></td><td style="padding:0.3rem 0.5rem;">多个进程以不同参数运行同一程序（如多个终端同时运行vi）</td></tr><tr><td style="padding:0.3rem 0.5rem;"><strong>多对多</strong></td><td style="padding:0.3rem 0.5rem;">多个进程并发执行多个不同的应用程序</td></tr></table>`
+  },
+  {
+    num: '第5题', title: '程序分析与fork',
+    content: `<p>5、阅读以下程序，回答问题：</p><pre style="background:#f5f2ed;padding:1rem;border-radius:8px;font-size:0.85rem;overflow-x:auto;margin:0.5rem 0;">
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;unistd.h&gt;  //①
+#include &lt;sys/types.h&gt;
+#include &lt;sys/wait.h&gt;
+int main(){
+    pid_t pid,wpid=0; //②
+    int status,i;
+    pid=fork();  //③
+    if(pid==-1){ perror("创建子进程失败！"); exit(0); }
+    else if(pid==0){
+        printf("这是子进程，进程号为：%d\n",getpid());
+        sleep(5); exit(6);
+    } else {
+        while(wpid==0){
+            wpid=waitpid(pid,&status,WNOHANG);
+            printf("这是父进程，正在等待子进程\n");
+            sleep(1);
+        }
+        i=WEXITSTATUS(status); //④
+        printf("等待的子进程号为：%d, 结束状态为：%d\n",wpid,i);
+    }
+    return 0;
+}
+</pre><p>（1）注释①处的头文件包含了哪些函数？<br>（2）注释②处的数据类型是什么，标准C的数据类型吗？<br>（3）注释③处的函数功能，三种返回值分别代表什么？<br>（4）注释④的功能是什么？<br>（5）该程序的功能是什么？</p>`,
+    answer: `<p><strong>（1）</strong>unistd.h包含：fork()、getpid()、sleep()</p><p><strong>（2）</strong>pid_t不是标准C数据类型，在sys/types.h中声明（int的typedef）</p><p><strong>（3）</strong>fork()创建子进程：-1创建失败；0在子进程中返回；>0在父进程中返回子进程PID</p><p><strong>（4）</strong>WEXITSTATUS(status)从waitpid返回的状态值中提取子进程退出状态码（exit(6)→6）</p><p><strong>（5）</strong>父进程创建子进程，子进程sleep5秒后以状态6退出；父进程以WNOHANG非阻塞方式轮询等待子进程结束，最后打印子进程PID和退出状态。</p>`
+  },
+  {
+    num: '第6题', title: '生产者-消费者（信箱同步）',
+    content: `<p>6、Alice有一个私有信箱mbox，最多存放N封邮件。Alice读邮件（每读一封自动删除），其他用户可发送邮件。请设计同步互斥算法。</p>`,
+    answer: `<p>设置三个信号量：</p><ul><li>empty = N：空位置数，控制发送者</li><li>mailcount = 0：邮件数，控制Alice</li><li>mutex = 1：互斥访问信箱</li></ul><pre style="background:#f5f2ed;padding:1rem;border-radius:8px;font-size:0.85rem;overflow-x:auto;margin:0.5rem 0;">
+semaphore mutex=1, empty=N, mailcount=0;
+
+Sender() {           // 发邮件
+    while (TRUE) {
+        wait(empty);     // 有空位才能发
+        wait(mutex);     // 互斥操作
+        写邮件;
+        signal(mutex);   // 释放互斥
+        signal(mailcount); // 邮件数+1
+    }
+}
+
+Reader() {           // 读邮件（Alice）
+    while (TRUE) {
+        wait(mailcount); // 有邮件才能读
+        wait(mutex);     // 互斥操作
+        读邮件;
+        signal(empty);   // 空位+1
+        signal(mutex);   // 释放互斥
+    }
+}
+</pre>`
+  },
+  {
+    num: '第7题', title: '虚拟地址到物理地址转换',
+    content: `<p>7、某虚拟存储器用户空间32个页面，每页1KB，内存16KB。某时刻0/1/2/3页分别分配物理块号5/10/4/7。请将虚拟地址0A5C和093C转换为物理地址。</p>`,
+    answer: `<p><strong>0A5CH</strong>：二进制0000 1010 0101 1100，高5位页号=2→物理块号4，物理地址=4×400H+25CH=<strong>125CH</strong></p><p><strong>093CH</strong>：二进制0000 1001 0011 1100，页号=2→物理块号4，物理地址=4×400H+13CH=<strong>113CH</strong></p>`
+  },
+  {
+    num: '第8题', title: '二级页表地址转换',
+    content: `<p>8、某系统按字节编址，采用二级页表分页存储管理，虚拟地址格式：页目录号10位|页表索引10位|页内偏移12位。回答：</p><p>（1）页和页框大小？进程虚拟地址空间大小？<br>（2）页目录项和页表项均占4B，页目录和页表共占多少页？<br>（3）若访问0100 0000H和0111 2048H，需访问几个二级页表？</p>`,
+    answer: `<p><strong>（1）</strong>页和页框大小=2<sup>12</sup>B=<strong>4KB</strong>；虚拟地址空间=2<sup>32</sup>/2<sup>12</sup>=<strong>2<sup>20</sup>页</strong></p><p><strong>（2）</strong>页目录=2<sup>10</sup>×4/4KB=<strong>1页</strong>；页表=2<sup>20</sup>×4/4KB=<strong>1024页</strong>；共<strong>1025页</strong></p><p><strong>（3）</strong>0100 0000H=0000 0001 0000 0000 0000 0000 0000 0000，高10位=4<br>0111 2048H=0000 0001 0001 0001 0010 0000 0100 1000，高10位=4<br>页目录号相同，访问<strong>1个</strong>二级页表。</p>`
+  }
+];
+
+// ================ Render ================
+
+function render() {
+  const nav = document.getElementById('sidebarNav');
+  const content = document.getElementById('content');
+  let navHTML = '';
+  let contentHTML = '';
+
+  DATA.forEach((ch, ci) => {
+    const ans = userAnswers[ch.id] || {};
+    const done = Object.keys(ans).length;
+    const total = ch.questions.length;
+    const pct = done > 0 ? Math.round(done/total*100) : 0;
+
+    navHTML += `<a class="nav-item" href="#${ch.id}" onclick="closeMenu()">
+      <span>${ch.title}</span>
+      <span class="nav-progress">${done}/${total}</span>
+    </a>`;
+
+    contentHTML += `<section class="chapter" id="${ch.id}">
+      <div class="chapter-header">
+        <h3>${ch.title}</h3>
+        <span class="chapter-progress">${done}/${total}</span>
+      </div>`;
+
+    ch.questions.forEach((q, qi) => {
+      const qid = `${ch.id}_${qi}`;
+      const selected = ans[qi];
+      const isCorrect = selected === q.a;
+      const showAnswer = revealedExps[qid] || currentMode === 'browse';
+
+      let cardClass = 'question-card';
+      if (selected !== undefined) cardClass += isCorrect ? ' correct' : ' wrong';
+
+      contentHTML += `<div class="${cardClass}" data-qid="${qid}">
+        <div class="q-header">
+          <span class="q-number">${qi+1}</span>
+          <span class="q-text">${q.q}</span>
+        </div>
+        <div class="q-options">`;
+
+      q.o.forEach((opt, oi) => {
+        let cls = 'q-option';
+        if (currentMode === 'browse') {
+          if (oi === q.a) cls += ' revealed correct-answer';
+          cls += ' disabled';
+        } else {
+          if (selected !== undefined) {
+            cls += ' disabled';
+            if (oi === selected && oi === q.a) cls += ' correct-answer';
+            else if (oi === selected && oi !== q.a) cls += ' wrong-answer';
+            else if (oi === q.a) cls += ' correct-answer';
+          } else {
+            cls += ' selectable';
+          }
+        }
+        contentHTML += `<div class="${cls}" data-qi="${qi}" data-oi="${oi}">${opt}</div>`;
+      });
+
+      contentHTML += `</div>`;
+
+      if (showAnswer || selected !== undefined) {
+        contentHTML += `<div class="q-answer show">
+          <span class="ans-label">${['A','B','C','D'][q.a]}</span>
+          <strong>${q.o[q.a].replace(/^[A-D]\.\s*/,'')}</strong>
+          <div class="exp">${q.exp}</div>
+        </div>`;
+      } else {
+        contentHTML += `<div class="q-answer"></div>`;
+      }
+
+      contentHTML += `</div>`;
+    });
+
+    contentHTML += `</section>`;
+  });
+
+  // Big Questions
+  contentHTML += `<section class="big-q-section" id="bigqs">
+    <div class="chapter-header">
+      <h3>📝 大题专项</h3>
+      <span class="chapter-progress">${BIG_QUESTIONS.length}题</span>
+    </div>`;
+
+  BIG_QUESTIONS.forEach((bq, i) => {
+    contentHTML += `<div class="big-q-card">
+      <div class="big-q-number">${bq.num} ${bq.title}</div>
+      <div class="big-q-content">${bq.content}</div>
+      <div class="big-q-content">
+        <div class="answer-label">参考答案：</div>
+        <div class="ans-block">${bq.answer}</div>
+      </div>
+    </div>`;
+  });
+
+  contentHTML += `</section>`;
+  content.innerHTML = contentHTML;
+
+  // Nav big questions
+  navHTML += `<div class="nav-item-divider">专项训练</div>
+  <a class="nav-item" href="#bigqs" onclick="closeMenu()">
+    <span>大题专项 (8题)</span>
+  </a>`;
+
+  nav.innerHTML = navHTML;
+  updateStats();
+
+  // Click handlers — event delegation, no full re-render
+  document.getElementById('content').addEventListener('click', function(e) {
+    const opt = e.target.closest('.q-option.selectable');
+    if (!opt) return;
+    const card = opt.closest('.question-card');
+    const qid = card.dataset.qid;
+    const qi = parseInt(opt.dataset.qi);
+    const oi = parseInt(opt.dataset.oi);
+    const [chId, qIdx] = qid.split('_');
+    const ch = DATA.find(c => c.id === chId);
+    const q = ch.questions[parseInt(qIdx)];
+    const labels = ['A','B','C','D'];
+
+    if (!userAnswers[chId]) userAnswers[chId] = {};
+    userAnswers[chId][qIdx] = oi;
+    localStorage.setItem(ANSWERS_KEY, JSON.stringify(userAnswers));
+    revealedExps[qid] = true;
+    localStorage.setItem('os_review_revealed', JSON.stringify(revealedExps));
+
+    // Update option styles
+    card.querySelectorAll('.q-option').forEach(el => {
+      el.classList.remove('selectable');
+      el.classList.add('disabled');
+      const oi2 = parseInt(el.dataset.oi);
+      if (oi2 === q.a) el.classList.add('correct-answer');
+      else if (oi2 === oi && oi !== q.a) el.classList.add('wrong-answer');
+    });
+
+    // Update card border
+    card.classList.remove('correct', 'wrong');
+    card.classList.add(oi === q.a ? 'correct' : 'wrong');
+
+    // Show answer
+    let ansDiv = card.querySelector('.q-answer');
+    const label = labels[q.a];
+    const text = q.o[q.a].replace(/^[A-D]\.\s*/,'');
+    if (ansDiv) {
+      ansDiv.innerHTML = `<span class="ans-label">${label}</span> <strong>${text}</strong><div class="exp">${q.exp}</div>`;
+      ansDiv.classList.add('show');
+    }
+
+    // Update nav & stats
+    const navItem = document.querySelector(`a.nav-item[href="#${chId}"] .nav-progress`);
+    if (navItem) {
+      const ans = userAnswers[chId] || {};
+      const done = Object.keys(ans).length;
+      navItem.textContent = `${done}/${ch.questions.length}`;
+    }
+    const chHeader = document.getElementById(chId)?.querySelector('.chapter-progress');
+    if (chHeader) {
+      const ans = userAnswers[chId] || {};
+      const done = Object.keys(ans).length;
+      chHeader.textContent = `${done}/${ch.questions.length}`;
+    }
+    updateStats();
+  });
+}
+
+function updateStats() {
+  let totalDone = 0, totalCorrect = 0, totalQ = 0;
+  DATA.forEach(ch => {
+    const ans = userAnswers[ch.id] || {};
+    ch.questions.forEach((q, qi) => {
+      totalQ++;
+      if (ans[qi] !== undefined) {
+        totalDone++;
+        if (ans[qi] === q.a) totalCorrect++;
+      }
+    });
+  });
+  document.getElementById('totalAnswered').textContent = totalDone;
+  document.getElementById('totalQuestions').textContent = totalQ;
+  document.getElementById('totalQuestions2').textContent = totalQ;
+  document.getElementById('totalCorrect').textContent = totalCorrect;
+  document.getElementById('accuracy').textContent = totalDone > 0 ? Math.round(totalCorrect/totalDone*100) + '%' : '0%';
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  localStorage.setItem(MODE_KEY, mode);
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  const savedY = window.scrollY;
+  render();
+  requestAnimationFrame(() => window.scrollTo(0, savedY));
+}
+
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.querySelector('.overlay').classList.toggle('show');
+}
+function closeMenu() {
+  if (window.innerWidth <= 768) {
+    document.getElementById('sidebar').classList.remove('open');
+    document.querySelector('.overlay').classList.remove('show');
+  }
+}
+
+render();
+</script>
+</body>
+</html>
