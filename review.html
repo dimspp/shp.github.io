@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>数据结构 · 45题复习</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAF7F2;
+  --surface:#FFFFFF;
+  --text:#1A1A2E;
+  --text-soft:#6B6B7A;
+  --accent:#C94F2B;
+  --accent-light:#F5E6DE;
+  --accent-glow:#E8C4B4;
+  --border:#E8E0D5;
+  --tag-choice:#2C6E49;
+  --tag-choice-bg:#E6F0EA;
+  --tag-fill:#2C3E50;
+  --tag-fill-bg:#E8EBEE;
+  --tag-judge:#8B5CF6;
+  --tag-judge-bg:#EDE9FE;
+  --tag-short:#C9772B;
+  --tag-short-bg:#F5EDE1;
+  --tag-big:#B02C4A;
+  --tag-big-bg:#F4E6EA;
+  --radius:16px;
+  --radius-sm:10px;
+  --shadow:0 2px 8px rgba(26,26,46,0.06),0 1px 2px rgba(26,26,46,0.04);
+  --font-serif:'Playfair Display',Georgia,serif;
+  --font-sans:'Inter',system-ui,-apple-system,sans-serif;
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  padding:0 0 80px 0;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* header */
+.header{
+  position:sticky;top:0;z-index:50;
+  background:var(--bg);
+  padding:20px 20px 12px;
+  border-bottom:1px solid var(--border);
+}
+.header-inner{max-width:640px;margin:0 auto}
+.header-top{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+.header h1{
+  font-family:var(--font-serif);
+  font-size:clamp(1.5rem,4.5vw,2rem);
+  font-weight:600;
+  letter-spacing:-0.01em;
+  color:var(--text);
+}
+.header .sub{
+  font-size:0.8rem;color:var(--text-soft);
+  font-weight:500;letter-spacing:0.02em;
+}
+.progress-bar{
+  margin-top:10px;
+  height:4px;
+  background:var(--border);
+  border-radius:2px;
+  overflow:hidden;
+}
+.progress-fill{
+  height:100%;
+  background:var(--accent);
+  width:0%;
+  border-radius:2px;
+  transition:width 0.4s ease;
+}
+.progress-text{
+  font-size:0.75rem;color:var(--text-soft);
+  margin-top:4px;font-weight:500;
+}
+
+/* filters */
+.filters{
+  display:flex;gap:6px;
+  padding:12px 20px 8px;
+  max-width:640px;margin:0 auto;
+  flex-wrap:wrap;
+}
+.filter-btn{
+  font-family:var(--font-sans);
+  font-size:0.75rem;font-weight:600;
+  padding:5px 12px;
+  border-radius:20px;
+  border:1.5px solid var(--border);
+  background:var(--surface);
+  color:var(--text-soft);
+  cursor:pointer;
+  transition:all 0.2s;
+  -webkit-tap-highlight-color:transparent;
+  white-space:nowrap;
+}
+.filter-btn:active{transform:scale(0.96)}
+.filter-btn.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+}
+
+/* question list */
+.q-list{
+  max-width:640px;
+  margin:0 auto;
+  padding:8px 16px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+/* question card */
+.q-card{
+  background:var(--surface);
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  padding:18px 20px;
+  transition:box-shadow 0.3s,border-color 0.3s;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  position:relative;
+  overflow:hidden;
+}
+.q-card:active{transform:scale(0.99)}
+.q-card.revealed{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),var(--shadow)}
+.q-card.hidden-q{display:none}
+
+.q-tag{
+  display:inline-flex;align-items:center;
+  font-size:0.65rem;font-weight:600;
+  padding:2px 8px;border-radius:4px;
+  letter-spacing:0.03em;
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+.q-tag.choice{background:var(--tag-choice-bg);color:var(--tag-choice)}
+.q-tag.fill{background:var(--tag-fill-bg);color:var(--tag-fill)}
+.q-tag.judge{background:var(--tag-judge-bg);color:var(--tag-judge)}
+.q-tag.short{background:var(--tag-short-bg);color:var(--tag-short)}
+.q-tag.big{background:var(--tag-big-bg);color:var(--tag-big)}
+
+.q-num{
+  font-size:0.7rem;font-weight:600;
+  color:var(--text-soft);
+  margin-left:6px;
+}
+.q-text{
+  font-size:0.95rem;font-weight:500;
+  line-height:1.65;
+  margin-bottom:6px;
+  color:var(--text);
+}
+.q-options{
+  display:flex;flex-direction:column;gap:3px;
+  margin:6px 0 0 4px;
+  font-size:0.88rem;
+  color:var(--text-soft);
+}
+
+.q-answer{
+  max-height:0;
+  overflow:hidden;
+  transition:max-height 0.35s ease,padding 0.3s ease,margin 0.3s ease,opacity 0.25s ease;
+  opacity:0;
+  padding-top:0;
+  margin-top:0;
+}
+.q-card.revealed .q-answer{
+  max-height:800px;
+  opacity:1;
+  padding-top:12px;
+  margin-top:10px;
+}
+.q-answer-inner{
+  background:var(--accent-light);
+  border-radius:var(--radius-sm);
+  padding:12px 14px;
+  font-size:0.9rem;
+  line-height:1.65;
+  border-left:3px solid var(--accent);
+  color:var(--text);
+}
+.q-answer-inner .label{
+  font-weight:600;
+  font-size:0.75rem;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  color:var(--accent);
+  display:block;
+  margin-bottom:4px;
+}
+.q-answer-inner pre{
+  font-family:var(--font-sans);
+  font-size:0.85rem;
+  line-height:1.5;
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+/* reveal hint */
+.reveal-hint{
+  font-size:0.7rem;
+  color:var(--text-soft);
+  opacity:0.5;
+  margin-top:6px;
+  transition:opacity 0.2s;
+}
+.q-card:hover .reveal-hint{opacity:0.8}
+.q-card.revealed .reveal-hint{display:none}
+
+/* empty */
+.empty-state{
+  text-align:center;
+  padding:60px 20px;
+  color:var(--text-soft);
+  font-size:0.95rem;
+}
+.empty-state strong{display:block;font-size:1.1rem;color:var(--text);margin-bottom:4px}
+
+/* big question special */
+.q-card.big-q .q-answer-inner{border-left-color:var(--tag-big);background:var(--tag-big-bg)}
+.q-card.big-q .q-answer-inner .label{color:var(--tag-big)}
+.q-card.big-q.revealed{border-color:var(--tag-big);box-shadow:0 0 0 1px var(--tag-big),var(--shadow)}
+
+/* responsive */
+@media(max-width:480px){
+  .header{padding:16px 14px 10px}
+  .q-list{padding:6px 10px;gap:10px}
+  .q-card{padding:14px 16px;border-radius:12px}
+  .q-text{font-size:0.9rem}
+  .filters{padding:10px 14px 6px;gap:5px}
+  .filter-btn{font-size:0.7rem;padding:4px 10px}
+}
+@media(min-width:768px){
+  .q-list{gap:14px}
+  .q-card{padding:22px 26px}
+  .header{padding:28px 20px 16px}
+}
+
+/* print */
+@media print{
+  .header{position:static}
+  .q-answer{max-height:none!important;opacity:1!important;padding-top:12px!important;margin-top:10px!important}
+  .reveal-hint{display:none!important}
+  .filter-btn{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <h1>数据结构</h1>
+      <span class="sub">45题复习手册</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text"><span id="revealedCount">0</span>/45 已掌握</div>
+  </div>
+</header>
+
+<div class="filters" id="filters">
+  <button class="filter-btn active" data-filter="all">全部</button>
+  <button class="filter-btn" data-filter="choice">选择题</button>
+  <button class="filter-btn" data-filter="fill">填空题</button>
+  <button class="filter-btn" data-filter="judge">判断题</button>
+  <button class="filter-btn" data-filter="short">简答题</button>
+  <button class="filter-btn" data-filter="big">大题</button>
+</div>
+
+<div class="q-list" id="qList"></div>
+
+<script>
+const qData = [
+  // ============ 选择题 1-15 ============
+  {id:1,type:'choice',q:'线性表若采用链式存储结构时，要求内存中可用存储单元的地址',opts:['A. 必须是连续的','B. 部分地址必须是连续的','C. 一定是不连续的','D. 连续不连续都可以'],ans:'<b>D</b>。链式存储利用指针链接结点，结点地址可以连续也可以不连续。'},
+  {id:2,type:'choice',q:'判定一个循环队列Q（最多元素为MAX）为满队列的条件是',opts:['A. Q->front == Q->rear','B. Q->front != Q->rear','C. Q->front == (Q->rear+1) % MAX','D. Q->front != (Q->rear+1) % MAX'],ans:'<b>C</b>。循环队列判满条件为 (rear+1) % MAX == front，牺牲一个单元区分队空和队满。'},
+  {id:3,type:'choice',q:'在一个单链表中，已知结点P，若在P结点后插入S结点，则执行',opts:['A. s->next=p->next; p->next=s;','B. p->next=s->next; s->next=p;','C. p->next=s; s->next=p->next;','D. 以上均不正确'],ans:'<b>A</b>。先让 S 指向 P 的后继，再让 P 指向 S，顺序不能颠倒。'},
+  {id:4,type:'choice',q:'设栈S和队列Q初始为空，元素 e1~e6 依次通过栈S，出栈即入队Q，出队顺序 e2,e4,e3,e6,e5,e1，则栈S容量至少为',opts:['A. 2','B. 3','C. 4','D. 6'],ans:'<b>B</b>（容量至少 3）。<br>推理：e1入栈→e2入栈→e2出栈(e2)→e3入栈→e4入栈→e4出栈(e4)→e3出栈(e3)→e5入栈→e6入栈→e6出栈(e6)→e5出栈(e5)→e1出栈(e1)。栈中最多时含 e1,e3,e4（3个元素）。'},
+  {id:5,type:'choice',q:'串是一种特殊的线性表，其特殊性体现在',opts:['A. 可以顺序存储','B. 数据元素是一个字符','C. 可以链式存储','D. 数据元素可以是多个字符'],ans:'<b>B</b>。串的数据元素只能是单个字符。'},
+  {id:6,type:'choice',q:'有关二叉树下列说法正确的是',opts:['A. 二叉树的度为2','B. 一棵二叉树的度可以小于2','C. 二叉树中至少有一个结点的度为2','D. 二叉树中任何一个结点的度都为2'],ans:'<b>B</b>。二叉树的度≤2，可以为 0（空树）、1（单支树）或 2。'},
+  {id:7,type:'choice',q:'一棵二叉树高度为h，所有结点的度或为0或为2，则这棵二叉树最少有',opts:['A. 2h','B. 2h-1','C. 2h+1','D. h+1'],ans:'<b>B</b>（2h-1）。除根结点外每层至少 2 个结点，故最少 1 + 2×(h-1) = 2h-1。<br>例如 h=2：根+2个子结点 = 3 = 2×2-1。'},
+  {id:8,type:'choice',q:'到目前为止哪种排序平均速度最大',opts:['A. 直接插入排序','B. 快速排序','C. 冒泡排序','D. 希尔排序'],ans:'<b>B</b>。快速排序平均时间复杂度 O(n log n)，是目前最快的通用比较排序算法（平均情况下）。'},
+  {id:9,type:'choice',q:'首先访问该结点，然后访问左子树，最后访问右子树，这种遍历称为',opts:['A. 先序遍历','B. 后序遍历','C. 中序遍历','D. 层次遍历'],ans:'<b>A</b>。先序遍历顺序：根 → 左子树 → 右子树。'},
+  {id:10,type:'choice',q:'一组记录关键字为 {46,79,56,38,40,84}，冒泡排序第一趟后的结果为',opts:['A. 38,40,46,56,79,84','B. 46,56,38,40,79,84','C. 40,38,46,56,79,84','D. 40,38,46,84,56,79'],ans:'<b>B</b>。第一趟相邻比较交换：<br>46↔79(不换)→79↔56(换)→79↔38(换)→79↔40(换)→79↔84(不换)，得 46,56,38,40,79,84。'},
+  {id:11,type:'choice',q:'下列哪一个不是树的存储形式',opts:['A. 双亲表示法','B. 孩子链表表示法','C. 孩子兄弟表示法','D. 顺序存储表示法'],ans:'<b>D</b>。顺序存储不是树特有的存储形式，树常用双亲、孩子链表、孩子兄弟表示法。'},
+  {id:12,type:'choice',q:'带权连通图所有边权值互不相同，则其最小生成树',opts:['A. 唯一','B. 不唯一','C. 可能唯一','D. 无法确定'],ans:'<b>A</b>。权值互不相同时，最小生成树唯一。'},
+  {id:13,type:'choice',q:'有向图中所有顶点入度之和等于出度之和的',opts:['A. 1/2','B. 1','C. 2','D. 4'],ans:'<b>B</b>。有向图中每条边贡献一个入度和一个出度，故入度之和等于出度之和。'},
+  {id:14,type:'choice',q:'深度优先遍历类似于二叉树的',opts:['A. 先序遍历','B. 中序遍历','C. 后序遍历','D. 层次遍历'],ans:'<b>A</b>。DFS 先访问结点再深入访问邻接点，类似于二叉树的先序遍历。'},
+  {id:15,type:'choice',q:'链表适用于什么查找',opts:['A. 顺序','B. 折半查找','C. 顺序，也能折半查找','D. 随机'],ans:'<b>A</b>。链表只能顺序查找，不支持随机存取，无法实现折半查找。'},
+
+  // ============ 填空题 16-25 ============
+  {id:16,type:'fill',q:'算法的时间复杂度主要取决于问题的 ______，而与计算机硬件性能、程序设计语言等无关。',ans:'规模（或数据量）'},
+  {id:17,type:'fill',q:'链式存储的特点是利用 ______ 来表示数据元素之间的逻辑关系。',ans:'指针'},
+  {id:18,type:'fill',q:'一个栈的输入序列是 A, B, C，则不可能的栈输出序列是 ______。',ans:'CAB。<br>A进A出→B进C进C出→B出B出→ABC ✓<br>A进B进B出→C进C出→A出A出→BCA ✓<br>A进B进C进C出B出A出→CBA ✓<br>A进B进→A出不可能（A下面还有B），故 CAB ✗'},
+  {id:19,type:'fill',q:'串的长度是指串中 ______ 的个数。',ans:'字符'},
+  {id:20,type:'fill',q:'树中结点的最大层次称为树的 ______。',ans:'深度（或高度）'},
+  {id:21,type:'fill',q:'由带权为 3,6,2,5 的4个叶子结点构成的哈夫曼树，带权路径长度为 ______。',ans:'31。<br>构造：2+3=5 → 5+5=10 → 10+6=16<br>WPL = 2×3 + 3×3 + 5×2 + 6×1 = 6+9+10+6 = 31'},
+  {id:22,type:'fill',q:'图形结构中元素之间存在 ______ 关系。',ans:'多对多'},
+  {id:23,type:'fill',q:'对 n 个顶点、e 条边的有向图，采用邻接表存储，进行DFS的时间复杂度为 ______。',ans:'O(n+e)（或 O(n+e)）'},
+  {id:24,type:'fill',q:'采用线性探测法处理冲突，散列表长度为 m 时，最坏情况下的查找长度可能达到 ______。',ans:'m（或 O(m)）'},
+  {id:25,type:'fill',q:'若待排序序列基本有序，则使用 ______ 排序算法的效率最高（时间复杂度接近 O(n)）。',ans:'直接插入（或冒泡）'},
+
+  // ============ 判断题 26-35 ============
+  {id:26,type:'judge',q:'线性表中的每个结点最多只有一个前驱和一个后继。',ans:'✓ 正确。线性表定义之一就是每个元素最多有一个前驱和一个后继（除了首尾）。'},
+  {id:27,type:'judge',q:'线性的数据结构可以顺序存储，也可以链接存储。非线性的数据结构只能链接存储。',ans:'✗ 错误。非线性结构（如树、图）也可以用顺序存储（如数组存储完全二叉树）。'},
+  {id:28,type:'judge',q:'栈和队列逻辑上都是线性表。',ans:'✓ 正确。栈和队列都是操作受限的线性表。'},
+  {id:29,type:'judge',q:'空串与空格串是一个概念。',ans:'✗ 错误。空串长度为 0，不含任何字符；空格串仅含空格字符，长度≥1。'},
+  {id:30,type:'judge',q:'哈希表的查找时间复杂度一定是 O(1)。',ans:'✗ 错误。理想情况下是 O(1)，但冲突严重时最坏可达 O(n)。'},
+  {id:31,type:'judge',q:'串是一个有穷字符序列。',ans:'✓ 正确。串是由零个或多个字符组成的有穷序列。'},
+  {id:32,type:'judge',q:'满二叉树一定是完全二叉树。',ans:'✓ 正确。满二叉树是完全二叉树的特例。'},
+  {id:33,type:'judge',q:'希尔排序与直接插入排序都是稳定的排序。',ans:'✗ 错误。直接插入排序稳定，希尔排序是分组的插入排序，不稳定。'},
+  {id:34,type:'judge',q:'深度为K的二叉树至多有 2K-1 个结点。',ans:'✗ 错误。应为 2<sup>K</sup>-1 个结点（指数级）。'},
+  {id:35,type:'judge',q:'图或网的生成树是唯一的。',ans:'✗ 错误。一个图的生成树通常不唯一（除非本身就是树）。'},
+
+  // ============ 简答题 36-40 ============
+  {id:36,type:'short',q:'栈和队列有什么共同点和区别？',ans:'<b>共同点：</b>都是操作受限的线性表。<br><b>区别：</b>栈是后进先出（LIFO），插入删除在同一端（栈顶）；队列是先进先出（FIFO），插入在队尾，删除在队头。'},
+  {id:37,type:'short',q:'描述二叉树的前序遍历、中序遍历和后序遍历的过程。',ans:'<b>前序（先序）：</b>根结点 → 左子树 → 右子树<br><b>中序：</b>左子树 → 根结点 → 右子树<br><b>后序：</b>左子树 → 右子树 → 根结点<br>注：每棵子树也按相同顺序递归遍历。'},
+  {id:38,type:'short',q:'算法具有哪些基本特性？',ans:'<b>五个基本特性：</b><br>① <b>有穷性</b>——算法必须在有限步后结束<br>② <b>确定性</b>——每一步都有明确含义，无歧义<br>③ <b>可行性</b>——每步操作都可以在有限时间内完成<br>④ <b>输入</b>——零个或多个输入<br>⑤ <b>输出</b>——至少一个输出'},
+  {id:39,type:'short',q:'简述图的两种常用存储结构及其适用场景。',ans:'<b>① 邻接矩阵：</b>二维数组存储边信息。适合稠密图，可 O(1) 判断两顶点是否相连，但空间 O(n²)。<br><b>② 邻接表：</b>每个顶点挂一个链表存储邻接点。适合稀疏图，空间 O(n+e)，但判断边是否存在需要遍历链表。'},
+  {id:40,type:'short',q:'简述快速排序和归并排序在"分治"策略上的区别。',ans:'<b>快速排序：</b>按基准值划分，子问题规模不固定（可能不均衡），原地排序（空间 O(log n)）。<br><b>归并排序：</b>严格对半等分，子问题规模始终平衡，需要 O(n) 辅助空间。'},
+
+  // ============ 大题 41-45 ============
+  {id:41,type:'big',q:'在一棵空的二叉查找树中依次插入关键字序列 12,7,17,11,16,2,13,9,21,4，请画出所得到的二叉查找树。',ans:'插入结果（二叉查找树）：<br><pre>            12\n          /    \\\n         7      17\n        / \\    /  \\\n       2  11  16   21\n        \\  /\n        4 9</pre>'},
+  {id:42,type:'big',q:'已知字符频率 {0.04,0.26,0.06,0.09,0.15,0.21,0.12,0.07}，设计哈夫曼编码（左0右1，同层左小右大）。',ans:'<b>哈夫曼树构造及编码：</b><br><pre>a(0.04): 0100    b(0.06): 0101\nc(0.07): 1110    d(0.09): 1111\ne(0.12): 011     f(0.15): 110\ng(0.21): 00      h(0.26): 10</pre><br>WPL = 0.04×4 + 0.06×4 + 0.07×4 + 0.09×4 + 0.12×3 + 0.15×3 + 0.21×2 + 0.26×2 = 2.61'},
+  {id:43,type:'big',q:'已知有向图 G：顶点集 V={v1,v2,v3,v4}，边集 E={&lt;v1,v2&gt;, &lt;v1,v4&gt;, &lt;v2,v3&gt;, &lt;v3,v1&gt;, &lt;v4,v3&gt;}。<br>(1) 画出逻辑结构图；(2) 写出邻接矩阵；(3) 画出邻接表。',ans:'<b>(1) 逻辑结构图：</b><br>v1 → v2, v4<br>v2 → v3<br>v3 → v1<br>v4 → v3<br><br><b>(2) 邻接矩阵：</b><br><pre>   v1 v2 v3 v4\nv1 0  1  0  1\nv2 0  0  1  0\nv3 1  0  0  0\nv4 0  0  1  0</pre><br><b>(3) 邻接表：</b><br><pre>v1 → [v2] → [v4]\nv2 → [v3]\nv3 → [v1]\nv4 → [v3]</pre>'},
+  {id:44,type:'big',q:'无向带权图 G：V={A,B,C,D,E}，边及权值：(A,B)=4, (A,C)=2, (B,C)=1, (B,D)=5, (C,D)=8, (C,E)=10, (D,E)=3。<br>(1) 从 A 出发用 Prim 算法构造最小生成树（每一步的顶点和边）；<br>(2) 画出最小生成树并计算总权值。',ans:'<b>(1) Prim 算法过程（从 A 出发）：</b><br>① 加入 A，选最小边 A-C(2)，U={A,C}<br>② 从 {A,C} 出发选最小边 C-B(1)，U={A,C,B}<br>③ 从 {A,C,B} 出发选最小边 B-D(5)，U={A,C,B,D}<br>④ 从 {A,C,B,D} 出发选最小边 D-E(3)，U={A,C,B,D,E}<br><br><b>(2) 最小生成树：</b><br><pre>    A\n    |\n    2\n    |\n    C\n    |\n    1\n    B\n    |\n    5\n    D\n    |\n    3\n    E</pre><br>总权值 = 2 + 1 + 5 + 3 = <b>11</b>'},
+  {id:45,type:'big',q:'关键字序列 {18,27,35,42,50,63,71,88}，哈希函数 H(key)=key mod 11，表长 m=11，线性探测再散列 di=(H(key)+i) mod 11。构造哈希表并写出每个关键字的地址。',ans:'<b>哈希表构造过程：</b><br><pre>18→18%11=7→地址 7\n27→27%11=5→地址 5\n35→35%11=2→地址 2\n42→42%11=9→地址 9\n50→50%11=6→地址 6\n63→63%11=8→地址 8\n71→71%11=5(冲突)→6(冲突)→7(冲突)→8(冲突)→9(冲突)→10→地址 10\n88→88%11=0→地址 0</pre><br><b>最终哈希表：</b><br><pre>地址: 0   1   2   3   4   5   6   7   8   9   10\n键:  88   -   35   -   -  27  50  18  63  42  71</pre>'}
+];
+
+// ==================== RENDER ====================
+const list = document.getElementById('qList');
+const progressFill = document.getElementById('progressFill');
+const revealedSpan = document.getElementById('revealedCount');
+
+let currentFilter = 'all';
+let revealed = new Set();
+
+function render(){
+  const filtered = currentFilter === 'all' ? qData : qData.filter(q => q.type === currentFilter);
+
+  if(filtered.length === 0){
+    list.innerHTML = `<div class="empty-state"><strong>暂无题目</strong>当前筛选条件下没有题目</div>`;
+    updateProgress();
+    return;
+  }
+
+  list.innerHTML = filtered.map(q => {
+    const cls = ['q-card'];
+    if(q.type === 'big') cls.push('big-q');
+    if(revealed.has(q.id)) cls.push('revealed');
+
+    const tagMap = {choice:'选择题',fill:'填空题',judge:'判断题',short:'简答题',big:'大题'};
+
+    let optsHtml = '';
+    if(q.opts) optsHtml = `<div class="q-options">${q.opts.map(o => `<span>${o}</span>`).join('')}</div>`;
+
+    return `
+      <div class="${cls.join(' ')}" data-id="${q.id}" onclick="toggle(${q.id})">
+        <div class="q-tag ${q.type}">${tagMap[q.type]}<span class="q-num">第${q.id}题</span></div>
+        <div class="q-text">${q.q}</div>
+        ${optsHtml}
+        <div class="q-answer"><div class="q-answer-inner"><span class="label">答案</span>${q.ans}</div></div>
+        <div class="reveal-hint">点击显示答案</div>
+      </div>
+    `;
+  }).join('');
+  updateProgress();
+}
+
+function toggle(id){
+  if(revealed.has(id)) revealed.delete(id); else revealed.add(id);
+  render();
+}
+
+function updateProgress(){
+  const count = revealed.size;
+  revealedSpan.textContent = count;
+  progressFill.style.width = (count / qData.length * 100) + '%';
+}
+
+// Filters
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentFilter = this.dataset.filter;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
