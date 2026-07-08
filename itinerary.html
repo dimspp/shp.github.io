@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江南行记 · 沪苏宁杭四城之旅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9pt..40pt,300..800;1,9pt..40pt,300..800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ===== RESET & BASE ===== */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+body{font-family:"DM Sans",system-ui,-apple-system,sans-serif;background:#f5f0eb;color:#1a1f2e;line-height:1.6}
+img{max-width:100%;display:block}
+
+/* ===== TYPOGRAPHY ===== */
+h1,h2,h3,h4{font-family:"Playfair Display",Georgia,serif;font-weight:600;line-height:1.2}
+h1{font-size:clamp(2.2rem,6vw,4rem);letter-spacing:-0.02em}
+h2{font-size:clamp(1.6rem,3.5vw,2.6rem);letter-spacing:-0.01em}
+h3{font-size:clamp(1.15rem,2vw,1.5rem)}
+h4{font-size:1rem;font-weight:600;font-family:"DM Sans",sans-serif;text-transform:uppercase;letter-spacing:0.12em;font-size:0.75rem;color:#8a7a6a}
+p{color:#2c2e35;max-width:65ch}
+.small{font-size:0.85rem;color:#6b5d51}
+
+/* ===== LAYOUT ===== */
+.container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* ===== HERO ===== */
+.hero{position:relative;padding:5rem 0 3.5rem;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:10%;right:10%;height:1px;background:linear-gradient(90deg,transparent,#c9a96e66,#c9a96e66,transparent)}
+.hero-subtitle{font-size:0.8rem;text-transform:uppercase;letter-spacing:0.2em;color:#8a7a6a;margin-bottom:0.75rem}
+.hero h1{margin-bottom:0.5rem}
+.hero .lead{font-size:clamp(1rem,1.8vw,1.2rem);color:#5a4e42;max-width:36rem;margin:0.75rem 0 1.5rem}
+.hero-meta{display:flex;flex-wrap:wrap;gap:2rem;margin-top:1rem}
+.hero-meta span{font-size:0.85rem;color:#6b5d51;display:flex;align-items:center;gap:0.4rem}
+.hero-meta span::before{content:'';display:inline-block;width:4px;height:4px;border-radius:50%;background:#c85a48}
+
+/* ===== ROUTE BAR ===== */
+.route-bar{display:flex;align-items:center;justify-content:space-between;gap:0;margin:2rem 0 3rem;padding:1.25rem 1.5rem;background:#faf7f2;border-radius:100px;box-shadow:0 1px 3px rgba(26,31,46,0.04)}
+.route-city{display:flex;flex-direction:column;align-items:center;gap:0.15rem;position:relative;z-index:1}
+.route-city .name{font-weight:600;font-size:0.9rem;color:#1a1f2e}
+.route-city .days{font-size:0.7rem;color:#8a7a6a;letter-spacing:0.05em}
+.route-city.active .name{color:#c85a48}
+.route-city.active .days{color:#c85a48}
+.route-line{flex:1;height:2px;background:#e8dccc;position:relative;margin:0 0.5rem;min-width:20px}
+.route-line .dot{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:6px;height:6px;border-radius:50%;background:#c9a96e}
+
+/* ===== OVERVIEW STATS ===== */
+.overview-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:1rem;margin-bottom:2.5rem}
+.stat-card{background:#faf7f2;border-radius:16px;padding:1rem 1.25rem;text-align:center}
+.stat-card .num{font-family:"Playfair Display",Georgia,serif;font-size:1.8rem;font-weight:600;color:#c85a48;line-height:1}
+.stat-card .label{font-size:0.75rem;color:#6b5d51;margin-top:0.25rem;text-transform:uppercase;letter-spacing:0.08em}
+
+/* ===== PROGRESS ===== */
+.progress-wrap{margin-bottom:2.5rem}
+.progress-header{display:flex;justify-content:space-between;font-size:0.85rem;color:#6b5d51;margin-bottom:0.4rem}
+.progress-track{height:4px;background:#e8dccc;border-radius:4px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#c85a48,#c9a96e);border-radius:4px;transition:width 0.6s cubic-bezier(0.22,1,0.36,1);width:0%}
+
+/* ===== DAYS ===== */
+.days-section{display:flex;flex-direction:column;gap:1px;background:#e8dccc;border-radius:20px;overflow:hidden;margin-bottom:4rem}
+.day-card{background:#faf7f2;overflow:hidden}
+.day-header{display:flex;align-items:center;gap:1rem;padding:1.25rem 1.5rem;cursor:pointer;user-select:none;transition:background 0.2s;border:none;background:none;width:100%;text-align:left;font:inherit;color:inherit}
+.day-header:hover{background:rgba(200,90,72,0.03)}
+.day-header .day-num{font-family:"Playfair Display",Georgia,serif;font-size:1.6rem;font-weight:600;color:#c85a48;line-height:1;min-width:2ch}
+.day-header .day-info{flex:1}
+.day-header .day-title{font-weight:600;font-size:1rem;color:#1a1f2e;display:flex;align-items:center;gap:0.5rem;flex-wrap:wrap}
+.day-header .day-city{font-size:0.7rem;color:#c9a96e;text-transform:uppercase;letter-spacing:0.1em;background:#f5f0eb;padding:0.15rem 0.6rem;border-radius:20px;font-weight:600}
+.day-header .day-sub{font-size:0.8rem;color:#8a7a6a;margin-top:0.1rem}
+.day-header .day-check{width:22px;height:22px;border-radius:50%;border:2px solid #d4c8bc;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.3s;font-size:0.6rem;color:transparent}
+.day-header .day-check.done{border-color:#c85a48;background:#c85a48;color:#fff}
+.day-header .chevron{font-size:0.7rem;color:#c9a96e;transition:transform 0.4s cubic-bezier(0.22,1,0.36,1);flex-shrink:0}
+.day-card.open .chevron{transform:rotate(180deg)}
+
+.day-body{max-height:0;overflow:hidden;transition:max-height 0.6s cubic-bezier(0.22,1,0.36,1)}
+.day-card.open .day-body{max-height:3000px}
+
+.day-activities{padding:0 1.5rem 1.5rem}
+.activity{display:flex;align-items:flex-start;gap:1rem;padding:0.75rem 0;border-bottom:1px solid #eee7e0;transition:opacity 0.3s}
+.activity:last-child{border-bottom:none}
+.activity-time{font-size:0.8rem;font-weight:600;color:#c85a48;min-width:5.5rem;padding-top:0.1rem;flex-shrink:0}
+.activity-content{flex:1;min-width:0}
+.activity-name{font-weight:500;font-size:0.95rem;color:#1a1f2e}
+.activity-desc{font-size:0.82rem;color:#6b5d51;margin-top:0.15rem;line-height:1.5}
+.activity-toggle{flex-shrink:0;position:relative;width:32px;height:32px;border-radius:50%;border:2px solid #d4c8bc;background:none;cursor:pointer;transition:all 0.3s;display:flex;align-items:center;justify-content:center;margin-top:0.1rem}
+.activity-toggle:hover{border-color:#c85a48}
+.activity-toggle.on{border-color:#c85a48;background:#c85a48}
+.activity-toggle.on::after{content:'✓';color:#fff;font-size:0.8rem;font-weight:700}
+.activity.dimmed{opacity:0.35}
+.activity-tip{display:inline-block;font-size:0.7rem;background:#f5f0eb;color:#8a7a6a;padding:0.1rem 0.5rem;border-radius:4px;margin-top:0.3rem}
+
+/* ===== TOOLBAR ===== */
+.toolbar{display:flex;flex-wrap:wrap;gap:0.75rem;margin-bottom:1.5rem}
+.btn{font-family:"DM Sans",sans-serif;font-size:0.8rem;font-weight:600;padding:0.55rem 1.2rem;border-radius:40px;border:none;cursor:pointer;transition:all 0.3s;display:inline-flex;align-items:center;gap:0.4rem}
+.btn-primary{background:#c85a48;color:#fff}
+.btn-primary:hover{background:#b04e3d}
+.btn-outline{background:transparent;color:#5a4e42;border:1.5px solid #d4c8bc}
+.btn-outline:hover{border-color:#c85a48;color:#c85a48}
+.btn-ghost{background:transparent;color:#8a7a6a;padding:0.55rem 0.8rem}
+.btn-ghost:hover{color:#1a1f2e}
+.btn .badge{background:rgba(255,255,255,0.2);padding:0.1rem 0.5rem;border-radius:20px;font-size:0.7rem}
+.btn-primary .badge{background:rgba(255,255,255,0.2)}
+
+/* ===== TIPS ===== */
+.tips-section{margin-bottom:3rem}
+.tips-section h3{margin-bottom:1rem}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem}
+.tip-card{background:#faf7f2;border-radius:16px;padding:1.25rem;border-left:3px solid #c9a96e}
+.tip-card .tip-icon{font-size:1.2rem;margin-bottom:0.4rem}
+.tip-card h4{font-family:"DM Sans",sans-serif;font-size:0.85rem;font-weight:600;color:#1a1f2e;margin-bottom:0.25rem}
+.tip-card p{font-size:0.82rem;color:#6b5d51;line-height:1.5}
+
+/* ===== SUMMARY BAR ===== */
+.summary-bar{position:sticky;bottom:1.5rem;background:#1a1f2e;color:#e8dccc;border-radius:60px;padding:0.75rem 1.25rem 0.75rem 1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;box-shadow:0 4px 24px rgba(26,31,46,0.18);max-width:800px;margin:0 auto;z-index:100}
+.summary-bar .count{font-size:0.85rem;font-weight:500}
+.summary-bar .count strong{color:#fff}
+.summary-bar .actions{display:flex;gap:0.5rem}
+.summary-bar .btn-small{font-size:0.75rem;padding:0.35rem 1rem;border-radius:30px;border:none;cursor:pointer;font-weight:600;transition:all 0.2s}
+.summary-bar .btn-small.primary{background:#c85a48;color:#fff}
+.summary-bar .btn-small.primary:hover{background:#b04e3d}
+.summary-bar .btn-small.ghost{background:rgba(255,255,255,0.08);color:#e8dccc}
+.summary-bar .btn-small.ghost:hover{background:rgba(255,255,255,0.15)}
+
+/* ===== COMPACT VIEW ===== */
+.compact-view{display:none}
+.compact-view.show{display:block}
+.compact-view .compact-day{margin-bottom:2rem}
+.compact-view .compact-day h3{font-size:1rem;color:#c85a48;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:1px solid #e8dccc}
+.compact-view .compact-item{display:flex;gap:0.75rem;padding:0.4rem 0;font-size:0.9rem}
+.compact-view .compact-item .ctime{color:#c85a48;font-weight:600;min-width:5rem;flex-shrink:0;font-size:0.8rem}
+.normal-view{display:block}
+.normal-view.hide{display:none}
+
+/* ===== FOOTER ===== */
+.footer{border-top:1px solid #e8dccc;padding:2.5rem 0;text-align:center;font-size:0.8rem;color:#8a7a6a;margin-top:2rem}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  .hero{padding:3rem 0 2rem}
+  .route-bar{flex-wrap:wrap;border-radius:20px;gap:0.5rem;padding:1rem}
+  .route-line{display:none}
+  .route-city{flex:1;min-width:60px}
+  .day-header{padding:1rem 1.1rem;gap:0.75rem}
+  .day-header .day-num{font-size:1.3rem;min-width:1.5ch}
+  .day-activities{padding:0 1.1rem 1.1rem}
+  .activity{gap:0.75rem}
+  .activity-time{min-width:4rem;font-size:0.75rem}
+  .summary-bar{flex-direction:column;text-align:center;border-radius:20px;padding:1rem;margin-left:0.5rem;margin-right:0.5rem}
+  .overview-stats{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:400px){
+  .route-city .name{font-size:0.75rem}
+  .route-city .days{font-size:0.6rem}
+}
+
+/* ===== TICKER (selected count badge on days) ===== */
+.day-header .selected-count{font-size:0.7rem;background:#c85a4815;color:#c85a48;padding:0.1rem 0.5rem;border-radius:20px;font-weight:500;display:none}
+.day-header .selected-count.show{display:inline}
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <p class="hero-subtitle">Eight Days · Four Cities</p>
+    <h1>江南行记</h1>
+    <p class="lead">上海 → 苏州 → 南京 → 杭州 — 一场穿越江南的松弛慢旅行。<br>按你南京两日路线的优化版本，节奏从容，不走回头路。</p>
+    <div class="hero-meta">
+      <span>8 日 4 城</span>
+      <span>7 晚住宿</span>
+      <span>4 程高铁</span>
+      <span>全程行李寄存</span>
+    </div>
+  </header>
+
+  <!-- ===== ROUTE BAR ===== -->
+  <div class="route-bar" id="routeBar">
+    <div class="route-city active" data-city="shanghai"><span class="name">上海</span><span class="days">D1–D3</span></div>
+    <div class="route-line"><span class="dot"></span></div>
+    <div class="route-city" data-city="suzhou"><span class="name">苏州</span><span class="days">D3–D4</span></div>
+    <div class="route-line"><span class="dot"></span></div>
+    <div class="route-city" data-city="nanjing"><span class="name">南京</span><span class="days">D5–D6</span></div>
+    <div class="route-line"><span class="dot"></span></div>
+    <div class="route-city" data-city="hangzhou"><span class="name">杭州</span><span class="days">D7–D8</span></div>
+  </div>
+
+  <!-- ===== STATS ===== -->
+  <div class="overview-stats">
+    <div class="stat-card"><div class="num" id="statActivities">0</div><div class="label">活动总数</div></div>
+    <div class="stat-card"><div class="num" id="statSelected">0</div><div class="label">已选定</div></div>
+    <div class="stat-card"><div class="num" id="statDays">8</div><div class="label">行程天数</div></div>
+    <div class="stat-card"><div class="num" id="statCities">4</div><div class="label">到访城市</div></div>
+  </div>
+
+  <!-- ===== PROGRESS ===== -->
+  <div class="progress-wrap">
+    <div class="progress-header"><span>行程选定进度</span><span id="progressText">0%</span></div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <div class="toolbar">
+    <button class="btn btn-primary" id="selectAllBtn"><span>✓</span> 全部选定</button>
+    <button class="btn btn-outline" id="deselectAllBtn">清空选定</button>
+    <button class="btn btn-ghost" id="toggleViewBtn">📋 精简视图</button>
+  </div>
+
+  <!-- ===== DAYS SECTION ===== -->
+  <div class="days-section normal-view" id="normalView">
+
+    <!-- DAY 1 -->
+    <div class="day-card" data-day="1">
+      <button class="day-header">
+        <span class="day-num">01</span>
+        <span class="day-info">
+          <span class="day-title">
+            抵达上海
+            <span class="day-city">上海</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：上海虹桥 · 休整适应</span>
+        </span>
+        <span class="day-check" id="checkDay1"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="1-1">
+            <span class="activity-time">傍晚</span>
+            <div class="activity-content">
+              <div class="activity-name">抵达虹桥，办理入住</div>
+              <div class="activity-desc">虹桥机场 / 高铁站抵达，入住虹桥区域酒店</div>
+            </div>
+            <button class="activity-toggle" data-key="1-1"></button>
+          </div>
+          <div class="activity" data-activity="1-2">
+            <span class="activity-time">晚餐</span>
+            <div class="activity-content">
+              <div class="activity-name">虹桥天街觅食</div>
+              <div class="activity-desc">龙湖虹桥天街餐饮丰富，晚餐后可在周边散步熟悉环境</div>
+            </div>
+            <button class="activity-toggle" data-key="1-2"></button>
+          </div>
+          <div class="activity" data-activity="1-3">
+            <span class="activity-time">晚间</span>
+            <div class="activity-content">
+              <div class="activity-name">休整早睡 · 保存体力</div>
+              <div class="activity-desc">为明日主城区行程储备精力</div>
+            </div>
+            <button class="activity-toggle" data-key="1-3"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 2 -->
+    <div class="day-card" data-day="2">
+      <button class="day-header">
+        <span class="day-num">02</span>
+        <span class="day-info">
+          <span class="day-title">
+            上海主城区
+            <span class="day-city">上海</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：上海虹桥 · 地铁2号线贯穿全日</span>
+        </span>
+        <span class="day-check" id="checkDay2"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="2-1">
+            <span class="activity-time">08:30–09:30</span>
+            <div class="activity-content">
+              <div class="activity-name">地铁2号线前往市区</div>
+              <div class="activity-desc">从虹桥站出发，直达静安寺/南京西路</div>
+            </div>
+            <button class="activity-toggle" data-key="2-1"></button>
+          </div>
+          <div class="activity" data-activity="2-2">
+            <span class="activity-time">10:00–11:40</span>
+            <div class="activity-content">
+              <div class="activity-name">武康路 · 安福路漫步</div>
+              <div class="activity-desc">老洋房建筑群、网红店铺、梧桐树荫下的上海风情</div>
+            </div>
+            <button class="activity-toggle" data-key="2-2"></button>
+          </div>
+          <div class="activity" data-activity="2-3">
+            <span class="activity-time">11:40–13:40</span>
+            <div class="activity-content">
+              <div class="activity-name">田子坊 + 本帮菜午餐</div>
+              <div class="activity-desc">弄堂里的石库门风情，品尝地道上海本帮菜</div>
+            </div>
+            <button class="activity-toggle" data-key="2-3"></button>
+          </div>
+          <div class="activity" data-activity="2-4">
+            <span class="activity-time">14:00–16:30</span>
+            <div class="activity-content">
+              <div class="activity-name">豫园 · 南京路步行街</div>
+              <div class="activity-desc">逛明代园林，感受南京路百年商业街繁华</div>
+            </div>
+            <button class="activity-toggle" data-key="2-4"></button>
+          </div>
+          <div class="activity" data-activity="2-5">
+            <span class="activity-time">16:30–18:40</span>
+            <div class="activity-content">
+              <div class="activity-name">外滩日落 · 陆家嘴夜景</div>
+              <div class="activity-desc">等候浦江日落，华灯初上时远眺陆家嘴天际线</div>
+            </div>
+            <button class="activity-toggle" data-key="2-5"></button>
+          </div>
+          <div class="activity" data-activity="2-6">
+            <span class="activity-time">20:00</span>
+            <div class="activity-content">
+              <div class="activity-name">返回虹桥酒店</div>
+              <div class="activity-desc">地铁2号线返回</div>
+            </div>
+            <button class="activity-toggle" data-key="2-6"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 3 — 上海→苏州 (OPTIMIZED) -->
+    <div class="day-card" data-day="3">
+      <button class="day-header">
+        <span class="day-num">03</span>
+        <span class="day-info">
+          <span class="day-title">
+            上海 → 苏州
+            <span class="day-city">上海 · 苏州</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：苏州平江路 · 提早高铁确保拙政园时间 <span style="color:#c85a48;font-weight:600;">✓ 优化</span></span>
+        </span>
+        <span class="day-check" id="checkDay3"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="3-1">
+            <span class="activity-time">09:00–10:00</span>
+            <div class="activity-content">
+              <div class="activity-name">外滩滨江步道</div>
+              <div class="activity-desc">清晨漫步黄浦江畔，避开日间人流</div>
+            </div>
+            <button class="activity-toggle" data-key="3-1"></button>
+          </div>
+          <div class="activity" data-activity="3-2">
+            <span class="activity-time">10:00–11:00</span>
+            <div class="activity-content">
+              <div class="activity-name">返回虹桥 · 退房取行李</div>
+              <div class="activity-desc">收拾行李办理退房</div>
+            </div>
+            <button class="activity-toggle" data-key="3-2"></button>
+          </div>
+          <div class="activity" data-activity="3-3">
+            <span class="activity-time">11:00–12:00</span>
+            <div class="activity-content">
+              <div class="activity-name">虹桥午餐</div>
+              <div class="activity-desc">趁午前轻松用餐</div>
+            </div>
+            <button class="activity-toggle" data-key="3-3"></button>
+          </div>
+          <div class="activity" data-activity="3-4">
+            <span class="activity-time">12:30–13:30</span>
+            <div class="activity-content">
+              <div class="activity-name">高铁前往苏州北</div>
+              <div class="activity-desc">提前购票，车程约30分钟</div>
+              <span class="activity-tip">🎫 提前购票</span>
+            </div>
+            <button class="activity-toggle" data-key="3-4"></button>
+          </div>
+          <div class="activity" data-activity="3-5">
+            <span class="activity-time">14:00–16:00</span>
+            <div class="activity-content">
+              <div class="activity-name">拙政园</div>
+              <div class="activity-desc">苏州园林之首，建议提前预约购票。冬季17:00关门，留足2小时</div>
+              <span class="activity-tip">🎫 需提前预约</span>
+            </div>
+            <button class="activity-toggle" data-key="3-5"></button>
+          </div>
+          <div class="activity" data-activity="3-6">
+            <span class="activity-time">16:30–20:30</span>
+            <div class="activity-content">
+              <div class="activity-name">平江路 · 摇橹船 · 苏式小吃</div>
+              <div class="activity-desc">入住平江路民宿后，夜游古街，乘坐摇橹船，品尝苏式面点</div>
+            </div>
+            <button class="activity-toggle" data-key="3-6"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 4 — 苏州→南京 -->
+    <div class="day-card" data-day="4">
+      <button class="day-header">
+        <span class="day-num">04</span>
+        <span class="day-info">
+          <span class="day-title">
+            苏州 → 南京
+            <span class="day-city">苏州 · 南京</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：南京夫子庙 · 清晨平江路 + 午后山塘街</span>
+        </span>
+        <span class="day-check" id="checkDay4"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="4-1">
+            <span class="activity-time">09:00–10:40</span>
+            <div class="activity-content">
+              <div class="activity-name">清晨平江路</div>
+              <div class="activity-desc">趁游客未至，感受水巷静谧</div>
+            </div>
+            <button class="activity-toggle" data-key="4-1"></button>
+          </div>
+          <div class="activity" data-activity="4-2">
+            <span class="activity-time">12:00</span>
+            <div class="activity-content">
+              <div class="activity-name">退房 · 寄存行李</div>
+              <div class="activity-desc">民宿前台免费寄存</div>
+            </div>
+            <button class="activity-toggle" data-key="4-2"></button>
+          </div>
+          <div class="activity" data-activity="4-3">
+            <span class="activity-time">12:00–13:40</span>
+            <div class="activity-content">
+              <div class="activity-name">平江路午餐</div>
+              <div class="activity-desc">品苏式汤面、生煎等地道美食</div>
+            </div>
+            <button class="activity-toggle" data-key="4-3"></button>
+          </div>
+          <div class="activity" data-activity="4-4">
+            <span class="activity-time">14:00–16:30</span>
+            <div class="activity-content">
+              <div class="activity-name">山塘街 · 喝茶放松</div>
+              <div class="activity-desc">"七里山塘"江南水乡风情，临河茶馆歇脚</div>
+            </div>
+            <button class="activity-toggle" data-key="4-4"></button>
+          </div>
+          <div class="activity" data-activity="4-5">
+            <span class="activity-time">17:30–18:10</span>
+            <div class="activity-content">
+              <div class="activity-name">高铁苏州北→南京南</div>
+              <div class="activity-desc">车程约1小时</div>
+              <span class="activity-tip">🎫 提前购票</span>
+            </div>
+            <button class="activity-toggle" data-key="4-5"></button>
+          </div>
+          <div class="activity" data-activity="4-6">
+            <span class="activity-time">18:40–21:00</span>
+            <div class="activity-content">
+              <div class="activity-name">秦淮河夜游 · 南京美食</div>
+              <div class="activity-desc">入住夫子庙后夜游秦淮河，品尝盐水鸭、鸭血粉丝汤</div>
+            </div>
+            <button class="activity-toggle" data-key="4-6"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 5 — 南京 D1 钟山 -->
+    <div class="day-card" data-day="5">
+      <button class="day-header">
+        <span class="day-num">05</span>
+        <span class="day-info">
+          <span class="day-title">
+            南京 D1 · 钟山风景区
+            <span class="day-city">南京</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：南京夫子庙 · 梧桐大道→美龄宫→中山陵→明孝陵</span>
+        </span>
+        <span class="day-check" id="checkDay5"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="5-1">
+            <span class="activity-time">09:00–09:30</span>
+            <div class="activity-content">
+              <div class="activity-name">夫子庙 → 钟山风景区</div>
+              <div class="activity-desc">地铁2号线至苜蓿园站，乘观光车入园（梧桐大道即在沿途）</div>
+            </div>
+            <button class="activity-toggle" data-key="5-1"></button>
+          </div>
+          <div class="activity" data-activity="5-2">
+            <span class="activity-time">09:30–10:30</span>
+            <div class="activity-content">
+              <div class="activity-name">美龄宫</div>
+              <div class="activity-desc">"远东第一别墅"，梧桐项链的项链坠</div>
+              <span class="activity-tip">🎫 联票含美龄宫</span>
+            </div>
+            <button class="activity-toggle" data-key="5-2"></button>
+          </div>
+          <div class="activity" data-activity="5-3">
+            <span class="activity-time">10:30–12:00</span>
+            <div class="activity-content">
+              <div class="activity-name">中山陵 · 音乐台</div>
+              <div class="activity-desc">392级台阶登顶俯瞰金陵，音乐台逗留喂鸽子</div>
+              <span class="activity-tip">🎫 中山陵免费需预约</span>
+            </div>
+            <button class="activity-toggle" data-key="5-3"></button>
+          </div>
+          <div class="activity" data-activity="5-4">
+            <span class="activity-time">12:00–13:30</span>
+            <div class="activity-content">
+              <div class="activity-name">景区午餐 · 休整</div>
+              <div class="activity-desc">景区内或附近餐厅就餐</div>
+            </div>
+            <button class="activity-toggle" data-key="5-4"></button>
+          </div>
+          <div class="activity" data-activity="5-5">
+            <span class="activity-time">13:30–16:30</span>
+            <div class="activity-content">
+              <div class="activity-name">明孝陵</div>
+              <div class="activity-desc">世界文化遗产，明太祖陵寝，神道石象路最负盛名</div>
+              <span class="activity-tip">🎫 联票含明孝陵</span>
+            </div>
+            <button class="activity-toggle" data-key="5-5"></button>
+          </div>
+          <div class="activity" data-activity="5-6">
+            <span class="activity-time">17:00–20:00</span>
+            <div class="activity-content">
+              <div class="activity-name">老门东 · 夜景美食</div>
+              <div class="activity-desc">南京历史街区，品尝梅花糕、牛肉锅贴、糖芋苗</div>
+            </div>
+            <button class="activity-toggle" data-key="5-6"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 6 — 南京 D2 (OPTIMIZED ROUTE) -->
+    <div class="day-card" data-day="6">
+      <button class="day-header">
+        <span class="day-num">06</span>
+        <span class="day-info">
+          <span class="day-title">
+            南京 D2 · 城南→城西→城北
+            <span class="day-city">南京</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：— · 纪念馆→鸡鸣寺→玄武湖→夫子庙→杭州 <span style="color:#c85a48;font-weight:600;">✓ 优化动线</span></span>
+        </span>
+        <span class="day-check" id="checkDay6"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="6-1">
+            <span class="activity-time">08:00–08:30</span>
+            <div class="activity-content">
+              <div class="activity-name">退房 · 行李寄存前台</div>
+              <div class="activity-desc">退房后行李寄存酒店，轻装出发</div>
+            </div>
+            <button class="activity-toggle" data-key="6-1"></button>
+          </div>
+          <div class="activity" data-activity="6-2">
+            <span class="activity-time">08:30–10:30</span>
+            <div class="activity-content">
+              <div class="activity-name">侵华日军南京大屠杀遇难同胞纪念馆</div>
+              <div class="activity-desc">地铁2号线云锦路站。务必提前公众号预约，周一闭馆</div>
+              <span class="activity-tip">⚠️ 必须提前预约</span>
+            </div>
+            <button class="activity-toggle" data-key="6-2"></button>
+          </div>
+          <div class="activity" data-activity="6-3">
+            <span class="activity-time">10:30–11:30</span>
+            <div class="activity-content">
+              <div class="activity-name">纪念馆附近午餐</div>
+              <div class="activity-desc">就近解决午餐</div>
+            </div>
+            <button class="activity-toggle" data-key="6-3"></button>
+          </div>
+          <div class="activity" data-activity="6-4">
+            <span class="activity-time">11:30–11:50</span>
+            <div class="activity-content">
+              <div class="activity-name">返回夫子庙取行李</div>
+              <div class="activity-desc">地铁回夫子庙，取寄存行李；也可考虑存至南京南站</div>
+            </div>
+            <button class="activity-toggle" data-key="6-4"></button>
+          </div>
+          <div class="activity" data-activity="6-5">
+            <span class="activity-time">12:30–14:00</span>
+            <div class="activity-content">
+              <div class="activity-name">鸡鸣寺</div>
+              <div class="activity-desc">"南朝四百八十寺"之首，春天樱花尤美，登塔可俯瞰玄武湖</div>
+              <span class="activity-tip">🎫 现场购票</span>
+            </div>
+            <button class="activity-toggle" data-key="6-5"></button>
+          </div>
+          <div class="activity" data-activity="6-6">
+            <span class="activity-time">14:00–15:30</span>
+            <div class="activity-content">
+              <div class="activity-name">玄武湖 · 南京城墙</div>
+              <div class="activity-desc">从鸡鸣寺步行至玄武湖，登台城城墙俯瞰湖光山色</div>
+            </div>
+            <button class="activity-toggle" data-key="6-6"></button>
+          </div>
+          <div class="activity" data-activity="6-7">
+            <span class="activity-time">15:30–17:00</span>
+            <div class="activity-content">
+              <div class="activity-name">夫子庙闲逛</div>
+              <div class="activity-desc">如有余暇回夫子庙走走，也可直接前往南京南站候车</div>
+            </div>
+            <button class="activity-toggle" data-key="6-7"></button>
+          </div>
+          <div class="activity" data-activity="6-8">
+            <span class="activity-time">17:30–18:40</span>
+            <div class="activity-content">
+              <div class="activity-name">高铁南京南 → 杭州东</div>
+              <div class="activity-desc">车程约1小时10分</div>
+              <span class="activity-tip">🎫 提前购票</span>
+            </div>
+            <button class="activity-toggle" data-key="6-8"></button>
+          </div>
+          <div class="activity" data-activity="6-9">
+            <span class="activity-time">19:30–21:00</span>
+            <div class="activity-content">
+              <div class="activity-name">河坊街 · 西湖夜景</div>
+              <div class="activity-desc">入住龙翔桥酒店后，漫步河坊街历史文化街区，远眺西湖夜色</div>
+            </div>
+            <button class="activity-toggle" data-key="6-9"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 7 — 杭州 -->
+    <div class="day-card" data-day="7">
+      <button class="day-header">
+        <span class="day-num">07</span>
+        <span class="day-info">
+          <span class="day-title">
+            杭州全天
+            <span class="day-city">杭州</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">住宿：杭州龙翔桥 · 灵隐→龙井→杨公堤→南山路</span>
+        </span>
+        <span class="day-check" id="checkDay7"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="7-1">
+            <span class="activity-time">08:30–11:30</span>
+            <div class="activity-content">
+              <div class="activity-name">灵隐寺 · 飞来峰</div>
+              <div class="activity-desc">千年古刹，飞来峰石刻造像。建议提前预约购票</div>
+              <span class="activity-tip">🎫 需提前预约</span>
+            </div>
+            <button class="activity-toggle" data-key="7-1"></button>
+          </div>
+          <div class="activity" data-activity="7-2">
+            <span class="activity-time">11:30–13:40</span>
+            <div class="activity-content">
+              <div class="activity-name">龙井村 · 品茶 · 农家菜</div>
+              <div class="activity-desc">前往龙井村品尝正宗西湖龙井，享用农家午餐</div>
+            </div>
+            <button class="activity-toggle" data-key="7-2"></button>
+          </div>
+          <div class="activity" data-activity="7-3">
+            <span class="activity-time">14:00–17:40</span>
+            <div class="activity-content">
+              <div class="activity-name">杨公堤 · 茅家埠骑行</div>
+              <div class="activity-desc">沿杨公堤环湖骑行或散步，茅家埠芦苇荡与湖光相映</div>
+            </div>
+            <button class="activity-toggle" data-key="7-3"></button>
+          </div>
+          <div class="activity" data-activity="7-4">
+            <span class="activity-time">18:00–20:00</span>
+            <div class="activity-content">
+              <div class="activity-name">南山路 · 西湖黄昏</div>
+              <div class="activity-desc">漫步南山路，观赏西湖黄昏到夜景的渐变</div>
+            </div>
+            <button class="activity-toggle" data-key="7-4"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAY 8 — 杭州返程 -->
+    <div class="day-card" data-day="8">
+      <button class="day-header">
+        <span class="day-num">08</span>
+        <span class="day-info">
+          <span class="day-title">
+            杭州 · 自由活动返程
+            <span class="day-city">杭州</span>
+            <span class="selected-count"></span>
+          </span>
+          <span class="day-sub">断桥→苏堤→整理行李→返程</span>
+        </span>
+        <span class="day-check" id="checkDay8"></span>
+        <span class="chevron">▾</span>
+      </button>
+      <div class="day-body">
+        <div class="day-activities">
+          <div class="activity" data-activity="8-1">
+            <span class="activity-time">上午</span>
+            <div class="activity-content">
+              <div class="activity-name">断桥 · 苏堤漫步</div>
+              <div class="activity-desc">清晨的白堤与苏堤游人稀少，最能感受西湖之美</div>
+            </div>
+            <button class="activity-toggle" data-key="8-1"></button>
+          </div>
+          <div class="activity" data-activity="8-2">
+            <span class="activity-time">中午</span>
+            <div class="activity-content">
+              <div class="activity-name">整理行李 · 退房</div>
+              <div class="activity-desc">收拾行装，办理退房</div>
+            </div>
+            <button class="activity-toggle" data-key="8-2"></button>
+          </div>
+          <div class="activity" data-activity="8-3">
+            <span class="activity-time">下午</span>
+            <div class="activity-content">
+              <div class="activity-name">杭州东站返程</div>
+              <div class="activity-desc">根据个人安排从杭州东站乘高铁或飞机返程</div>
+            </div>
+            <button class="activity-toggle" data-key="8-3"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COMPACT VIEW ===== -->
+  <div class="compact-view" id="compactView"></div>
+
+  <!-- ===== TIPS ===== -->
+  <div class="tips-section">
+    <h3>出行备忘</h3>
+    <div class="tips-grid">
+      <div class="tip-card">
+        <div class="tip-icon">🎫</div>
+        <h4>预约清单</h4>
+        <p>中山陵、明孝陵·美龄宫·音乐台（联票）、纪念馆、灵隐寺 — 全部需线上提前预约</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🚄</div>
+        <h4>城际高铁</h4>
+        <p>全部安排在下午时段，完美适配12:00退房节奏，白天游玩时间完整</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">🧳</div>
+        <h4>行李寄存</h4>
+        <p>全部酒店均可免费寄存行李，轻装出行。Day 6 也可利用南京南站寄存</p>
+      </div>
+      <div class="tip-card">
+        <div class="tip-icon">📅</div>
+        <h4>时间提醒</h4>
+        <p>Day 3 拙政园冬季17:00关门；Day 6 纪念馆周一闭馆；所有预约建议提前3天</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <p>江南行记 · 沪苏宁杭四城优化行程 &mdash; 祝你旅途愉快</p>
+  </footer>
+</div>
+
+<!-- ===== STICKY SUMMARY BAR ===== -->
+<div class="summary-bar" id="summaryBar">
+  <span class="count">已选定 <strong id="totalSelected">0</strong> / <span id="totalCount">0</span> 个活动</span>
+  <span class="actions">
+    <button class="btn-small ghost" id="scrollTopBtn">↑ 回到顶部</button>
+    <button class="btn-small primary" id="viewSelectedBtn">📋 查看选定行程</button>
+  </span>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  const state = { selected: new Set() };
+  let compactVisible = false;
+
+  // ===== INIT =====
+  document.addEventListener('DOMContentLoaded', function(){
+
+    // --- Accordion ---
+    document.querySelectorAll('.day-header').forEach(btn => {
+      btn.addEventListener('click', function(){
+        const card = this.closest('.day-card');
+        const isOpen = card.classList.contains('open');
+        // close all others
+        document.querySelectorAll('.day-card.open').forEach(c => c.classList.remove('open'));
+        if (!isOpen) card.classList.add('open');
+      });
+    });
+
+    // open first day by default
+    const first = document.querySelector('.day-card');
+    if (first) first.classList.add('open');
+
+    // --- Activity toggles ---
+    document.querySelectorAll('.activity-toggle').forEach(toggle => {
+      toggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        const key = this.dataset.key;
+        toggleActivity(key);
+      });
+    });
+
+    // --- Select All ---
+    document.getElementById('selectAllBtn').addEventListener('click', function(){
+      document.querySelectorAll('.activity-toggle').forEach(t => {
+        const key = t.dataset.key;
+        state.selected.add(key);
+        t.classList.add('on');
+        t.closest('.activity').classList.remove('dimmed');
+      });
+      updateAll();
+    });
+
+    // --- Deselect All ---
+    document.getElementById('deselectAllBtn').addEventListener('click', function(){
+      document.querySelectorAll('.activity-toggle').forEach(t => {
+        const key = t.dataset.key;
+        state.selected.delete(key);
+        t.classList.remove('on');
+      });
+      document.querySelectorAll('.activity').forEach(a => a.classList.remove('dimmed'));
+      updateAll();
+    });
+
+    // --- Toggle View ---
+    document.getElementById('toggleViewBtn').addEventListener('click', function(){
+      compactVisible = !compactVisible;
+      document.getElementById('normalView').classList.toggle('hide', compactVisible);
+      document.getElementById('compactView').classList.toggle('show', compactVisible);
+      this.textContent = compactVisible ? '📅 完整视图' : '📋 精简视图';
+      if (compactVisible) renderCompact();
+    });
+
+    // --- View Selected ---
+    document.getElementById('viewSelectedBtn').addEventListener('click', function(){
+      if (!compactVisible) {
+        document.getElementById('toggleViewBtn').click();
+      }
+      // scroll to compact view
+      document.getElementById('compactView').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // --- Scroll Top ---
+    document.getElementById('scrollTopBtn').addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // --- Route bar interactivity ---
+    document.querySelectorAll('.route-city').forEach(city => {
+      city.addEventListener('click', function(){
+        const cityName = this.dataset.city;
+        const dayMap = { shanghai: 1, suzhou: 3, nanjing: 5, hangzhou: 7 };
+        const day = dayMap[cityName];
+        if (day) {
+          const target = document.querySelector(`.day-card[data-day="${day}"]`);
+          if (target) {
+            document.querySelectorAll('.day-card.open').forEach(c => c.classList.remove('open'));
+            target.classList.add('open');
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    // init
+    updateAll();
+  });
+
+  // ===== TOGGLE ACTIVITY =====
+  function toggleActivity(key){
+    const toggle = document.querySelector(`.activity-toggle[data-key="${key}"]`);
+    if (!toggle) return;
+    const activity = toggle.closest('.activity');
+    if (state.selected.has(key)){
+      state.selected.delete(key);
+      toggle.classList.remove('on');
+      activity.classList.add('dimmed');
+    } else {
+      state.selected.add(key);
+      toggle.classList.add('on');
+      activity.classList.remove('dimmed');
+    }
+    updateAll();
+  }
+
+  // ===== UPDATE ALL =====
+  function updateAll(){
+    const total = document.querySelectorAll('.activity-toggle').length;
+    const sel = state.selected.size;
+    const pct = total > 0 ? Math.round((sel / total) * 100) : 0;
+
+    document.getElementById('totalSelected').textContent = sel;
+    document.getElementById('totalCount').textContent = total;
+    document.getElementById('statActivities').textContent = total;
+    document.getElementById('statSelected').textContent = sel;
+    document.getElementById('progressText').textContent = pct + '%';
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    // update day checks
+    [1,2,3,4,5,6,7,8].forEach(d => {
+      const dayActs = document.querySelectorAll(`.day-card[data-day="${d}"] .activity-toggle`);
+      const daySel = document.querySelectorAll(`.day-card[data-day="${d}"] .activity-toggle.on`).length;
+      const check = document.getElementById(`checkDay${d}`);
+      if (check) {
+        check.classList.toggle('done', daySel > 0 && daySel === dayActs.length);
+        check.textContent = daySel === dayActs.length && dayActs.length > 0 ? '✓' : '';
+      }
+      // selected count badge
+      const badge = document.querySelector(`.day-card[data-day="${d}"] .selected-count`);
+      if (badge) {
+        if (daySel > 0) {
+          badge.textContent = daySel === dayActs.length ? '✓ 全部' : `${daySel}/${dayActs.length}`;
+          badge.classList.add('show');
+        } else {
+          badge.classList.remove('show');
+        }
+      }
+    });
+
+    if (compactVisible) renderCompact();
+  }
+
+  // ===== RENDER COMPACT VIEW =====
+  function renderCompact(){
+    const container = document.getElementById('compactView');
+    if (!container) return;
+    const days = [1,2,3,4,5,6,7,8];
+    const dayNames = ['抵达上海','上海主城区','上海 → 苏州','苏州 → 南京','南京 · 钟山','南京 · 城南城北','杭州全天','杭州 · 返程'];
+    let html = '';
+    days.forEach((d, i) => {
+      const activities = document.querySelectorAll(`.day-card[data-day="${d}"] .activity`);
+      const hasSelected = Array.from(activities).some(a => {
+        const key = a.querySelector('.activity-toggle')?.dataset.key;
+        return key && state.selected.has(key);
+      });
+      if (!hasSelected) return;
+
+      html += `<div class="compact-day"><h3>Day ${d} · ${dayNames[i]}</h3>`;
+      activities.forEach(a => {
+        const key = a.querySelector('.activity-toggle')?.dataset.key;
+        if (!key || !state.selected.has(key)) return;
+        const time = a.querySelector('.activity-time')?.textContent || '';
+        const name = a.querySelector('.activity-name')?.textContent || '';
+        html += `<div class="compact-item"><span class="ctime">${time}</span><span>${name}</span></div>`;
+      });
+      html += '</div>';
+    });
+    container.innerHTML = html || '<p style="color:#8a7a6a;text-align:center;padding:2rem 0;">尚未选定任何活动，请先在完整视图中勾选</p>';
+  }
+
+  // ===== EXPOSE for debugging =====
+  window.__state = state;
+
+})();
+</script>
+</body>
+</html>
