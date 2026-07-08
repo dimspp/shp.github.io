@@ -22,6 +22,7 @@ h3{font-size:clamp(1.15rem,2vw,1.5rem)}
 h4{font-size:1rem;font-weight:600;font-family:"DM Sans",sans-serif;text-transform:uppercase;letter-spacing:0.12em;font-size:0.75rem;color:#8a7a6a}
 p{color:#2c2e35;max-width:65ch}
 .small{font-size:0.85rem;color:#6b5d51}
+.day-date{font-weight:600;color:#c9a96e;background:#f5f0eb;padding:0.05rem 0.55rem;border-radius:12px;font-size:0.78rem;display:inline-block}
 
 /* ===== LAYOUT ===== */
 .container{max-width:1100px;margin:0 auto;padding:0 1.5rem}
@@ -168,6 +169,7 @@ p{color:#2c2e35;max-width:65ch}
     <p class="lead">上海 → 苏州 → 南京 → 杭州 — 一场穿越江南的松弛慢旅行。<br>按你南京两日路线的优化版本，节奏从容，不走回头路。</p>
     <div class="hero-meta">
       <span>8 日 4 城</span>
+      <span>7月18日 – 7月25日</span>
       <span>7 晚住宿</span>
       <span>4 程高铁</span>
       <span>全程行李寄存</span>
@@ -176,13 +178,13 @@ p{color:#2c2e35;max-width:65ch}
 
   <!-- ===== ROUTE BAR ===== -->
   <div class="route-bar" id="routeBar">
-    <div class="route-city active" data-city="shanghai"><span class="name">上海</span><span class="days">D1–D3</span></div>
+    <div class="route-city active" data-city="shanghai"><span class="name">上海</span><span class="days">7/18–7/20</span></div>
     <div class="route-line"><span class="dot"></span></div>
-    <div class="route-city" data-city="suzhou"><span class="name">苏州</span><span class="days">D3–D4</span></div>
+    <div class="route-city" data-city="suzhou"><span class="name">苏州</span><span class="days">7/20–7/21</span></div>
     <div class="route-line"><span class="dot"></span></div>
-    <div class="route-city" data-city="nanjing"><span class="name">南京</span><span class="days">D5–D6</span></div>
+    <div class="route-city" data-city="nanjing"><span class="name">南京</span><span class="days">7/22–7/23</span></div>
     <div class="route-line"><span class="dot"></span></div>
-    <div class="route-city" data-city="hangzhou"><span class="name">杭州</span><span class="days">D7–D8</span></div>
+    <div class="route-city" data-city="hangzhou"><span class="name">杭州</span><span class="days">7/24–7/25</span></div>
   </div>
 
   <!-- ===== STATS ===== -->
@@ -219,7 +221,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">上海</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：上海虹桥 · 休整适应</span>
+          <span class="day-sub"><span class="day-date">7月18日 周五</span> · 住宿：上海虹桥 · 休整适应</span>
         </span>
         <span class="day-check" id="checkDay1"></span>
         <span class="chevron">▾</span>
@@ -264,7 +266,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">上海</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：上海虹桥 · 地铁2号线贯穿全日</span>
+          <span class="day-sub"><span class="day-date">7月19日 周六</span> · 住宿：上海虹桥 · 地铁2号线贯穿全日</span>
         </span>
         <span class="day-check" id="checkDay2"></span>
         <span class="chevron">▾</span>
@@ -333,7 +335,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">上海 · 苏州</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：苏州平江路 · 提早高铁确保拙政园时间 <span style="color:#c85a48;font-weight:600;">✓ 优化</span></span>
+          <span class="day-sub"><span class="day-date">7月20日 周日</span> · 住宿：苏州平江路 · 提早高铁确保拙政园时间 <span style="color:#c85a48;font-weight:600;">✓ 优化</span></span>
         </span>
         <span class="day-check" id="checkDay3"></span>
         <span class="chevron">▾</span>
@@ -404,7 +406,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">苏州 · 南京</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：南京夫子庙 · 清晨平江路 + 午后山塘街</span>
+          <span class="day-sub"><span class="day-date">7月21日 周一</span> · 住宿：南京夫子庙 · 清晨平江路 + 午后山塘街</span>
         </span>
         <span class="day-check" id="checkDay4"></span>
         <span class="chevron">▾</span>
@@ -474,7 +476,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">南京</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：南京夫子庙 · 梧桐大道→美龄宫→中山陵→明孝陵</span>
+          <span class="day-sub"><span class="day-date">7月22日 周二</span> · 住宿：南京夫子庙 · 梧桐大道→美龄宫→中山陵→明孝陵</span>
         </span>
         <span class="day-check" id="checkDay5"></span>
         <span class="chevron">▾</span>
@@ -546,7 +548,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">南京</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：— · 纪念馆→鸡鸣寺→玄武湖→夫子庙→杭州 <span style="color:#c85a48;font-weight:600;">✓ 优化动线</span></span>
+          <span class="day-sub"><span class="day-date">7月23日 周三</span> · 住宿：— · 纪念馆→鸡鸣寺→玄武湖→夫子庙→杭州 <span style="color:#c85a48;font-weight:600;">✓ 优化动线</span></span>
         </span>
         <span class="day-check" id="checkDay6"></span>
         <span class="chevron">▾</span>
@@ -642,7 +644,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">杭州</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">住宿：杭州龙翔桥 · 灵隐→龙井→杨公堤→南山路</span>
+          <span class="day-sub"><span class="day-date">7月24日 周四</span> · 住宿：杭州龙翔桥 · 灵隐→龙井→杨公堤→南山路</span>
         </span>
         <span class="day-check" id="checkDay7"></span>
         <span class="chevron">▾</span>
@@ -696,7 +698,7 @@ p{color:#2c2e35;max-width:65ch}
             <span class="day-city">杭州</span>
             <span class="selected-count"></span>
           </span>
-          <span class="day-sub">断桥→苏堤→整理行李→返程</span>
+          <span class="day-sub"><span class="day-date">7月25日 周五</span> · 断桥→苏堤→整理行李→返程</span>
         </span>
         <span class="day-check" id="checkDay8"></span>
         <span class="chevron">▾</span>
@@ -757,7 +759,7 @@ p{color:#2c2e35;max-width:65ch}
       <div class="tip-card">
         <div class="tip-icon">📅</div>
         <h4>时间提醒</h4>
-        <p>Day 3 拙政园冬季17:00关门；Day 6 纪念馆周一闭馆；所有预约建议提前3天</p>
+        <p>7月拙政园旺季约17:30关门；7/23(周三)纪念馆开放（周一闭馆）；所有预约建议提前3天</p>
       </div>
     </div>
   </div>
